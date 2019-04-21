@@ -35,7 +35,7 @@ class Game(models.Model):
     player_1 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='first_games')
     player_2 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='second_games')
 
-    is_over = models.BooleanField(default=False)
+    is_complete = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     p1_points = models.IntegerField(null=True)
@@ -58,6 +58,7 @@ class Game(models.Model):
     DRAW = 'draw'
     DISCARD = 'discard'
     WAIT = 'wait'
+    COMPLETE = 'complete'
 
     def __str__(self):
         return f'Game(#{self.id}): {self.player_1} vs. {self.player_2}'
@@ -142,7 +143,7 @@ class Game(models.Model):
         self.discard.append(card)
 
         if self.user_points(user) == 0:
-            self.is_over = True
+            self.is_complete = True
             self.is_active = False
             if self.is_player_1(user):
                 self.p1_points = 0
@@ -237,6 +238,9 @@ class Game(models.Model):
         :param user: (User)
         :return: (str) 'draw', 'discard', 'wait'
         """
+        if self.is_complete:
+            return self.COMPLETE
+
         is_p1 = self.is_player_1(user)
         is_p2 = self.is_player_2(user)
 
@@ -258,8 +262,18 @@ class Game(models.Model):
         if not (is_p1 or is_p2):
             return {}
 
+        if self.is_complete:
+            return {
+                'hand': self.users_hand(user),
+                'top_of_discard': self.top_of_discard,
+                'action': Game.COMPLETE,
+                'opponent_hand': self.opponents_hand(user),
+                'points': self.p1_points if is_p1 else self.p2_points,
+                'opponent_points': self.p1_points if is_p2 else self.p2_points,
+            }
+
         return {
-            'hand': self.p1_hand if is_p1 else self.p2_hand,
+            'hand': self.users_hand(user),
             'top_of_discard': self.top_of_discard,
             'action': self.get_action(user)
         }
@@ -284,6 +298,11 @@ class Game(models.Model):
             return self.p2_hand
         else:
             raise Exception(f"{user} is not in {self}")
+
+    def opponents_hand(self, user):
+        assert user in {self.player_1, self.player_2}
+        opponent = self.player_1 if user == self.player_2 else self.player_2
+        return self.users_hand(opponent)
 
     @staticmethod
     def random_deck():
@@ -313,7 +332,7 @@ class Game(models.Model):
         game = Game(
             player_1_id=player_1_id,
             player_2_id=player_2_id,
-            is_over=False,
+            is_complete=False,
             p1_wins=None,
             shuffles=0,
             p1_draws=True,
