@@ -16,7 +16,7 @@ def list_users(request):
         # list all potential opponents
         if user['id'] != request.user.id
     ]
-    return JsonResponse(data=list(all_users))
+    return JsonResponse(data=list(all_users), safe=False)
 
 
 def create_game(request):
@@ -30,7 +30,7 @@ def create_game(request):
     return JsonResponse(data=game.state_dict(user))
 
 
-def get_games(request):
+def get_users_games(request):
     """
 
     :param request:
