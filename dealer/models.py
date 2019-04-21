@@ -31,6 +31,11 @@ class Game(models.Model):
     deck = ArrayField(base_field=CardField())
     top_card = CardField()
 
+    p1_discards = models.BooleanField()
+    p1_draws = models.BooleanField()
+    p2_discards = models.BooleanField()
+    p2_draws = models.BooleanField()
+
 
 class StartingHand(models.Model):
     player = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
