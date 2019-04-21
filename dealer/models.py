@@ -43,6 +43,83 @@ class Game(models.Model):
     p2_discards = models.BooleanField()
     p2_draws = models.BooleanField()
 
+    DRAW = 'draw'
+    DISCARD = 'discard'
+    WAIT = 'wait'
+
+    def __str__(self):
+        return f'Game(#{self.id}): {self.player_1} vs. {self.player_2}'
+
+    def draw_top_card(self, user):
+        """
+
+        :param user:
+        :return:
+        """
+        pass  # TODO
+
+    def draw_from_discard(self, user):
+        """
+
+        :param user:
+        :return:
+        """
+        pass  # TODO
+
+    def discard_card(self, user, card):
+        """
+
+        :param user:
+        :param card:
+        :return:
+        """
+        # TODO
+
+    def state_dict(self, user):
+        return {self.id: self.get_state(user)}
+
+    def get_action(self, user):
+        """
+
+        :param user: (User)
+        :return: (str) 'draw', 'discard', 'wait'
+        """
+        is_p1 = user == self.player_1
+        is_p2 = not is_p1
+
+        if (is_p1 and self.p1_draws) or (is_p2 and self.p2_draws):
+            return self.DRAW
+        elif (is_p1 and self.p1_discards) or (is_p2 and self.p2_discards):
+            return self.DISCARD
+        else:
+            return self.WAIT
+
+    def get_state(self, user):
+        """
+
+        :param user: (User)
+        :return: (str, dict)
+        """
+        is_p1 = user == self.player_1
+        return {
+            'hand': self.p1_hand if is_p1 else self.p2_hand,
+            'top_card': self.top_card,
+            'action': self.get_action(user)
+        }
+
+    def users_hand(self, user):
+        """
+
+        :param user:
+        :return:
+        """
+        if user == self.player_1:
+            return self.p1_hand
+        elif user == self.player_2:
+            return self.p2_hand
+        else:
+            raise Exception(f"{user} is not in {self}")
+
     @staticmethod
     def random_deck():
         deck = [card for card, _ in CARD_CHOICES]
@@ -64,8 +141,8 @@ class Game(models.Model):
     def new_game(player_1_id, player_2_id):
         """
 
-        :param player_1:
-        :param player_2:
+        :param player_1_id: (int)
+        :param player_2_id: (int)
         :return:
         """
         dealt_game = Game.deal_new_game()
@@ -82,36 +159,17 @@ class Game(models.Model):
             **dealt_game
         )
         game.save()
+        StartingHand.objects.create(
+            game=game,
+            player=game.player_1,
+            hand=game.p1_hand
+        )
+        StartingHand.objects.create(
+            game=game,
+            player=game.player_2,
+            hand=game.p2_hand
+        )
         return game
-
-    def get_action(self, user):
-        """
-
-        :param user: (User)
-        :return: (str) 'draw', 'discard', 'wait'
-        """
-        is_p1 = user == self.player_1
-        is_p2 = not is_p1
-
-        if (is_p1 and self.p1_draws) or (is_p2 and self.p2_draws):
-            return 'draw'
-        elif (is_p1 and self.p1_discards) or (is_p2 and self.p2_discards):
-            return 'discard'
-        else:
-            return 'wait'
-
-    def parse_game(self, user):
-        """
-
-        :param user:
-        :return: (str, dict)
-        """
-        is_p1 = user == self.player_1
-        game_dict = {
-            'hand': self.p1_hand if is_p1 else self.p2_hand,
-            'top_card': self.top_card,
-        }
-        return self.get_action(user), game_dict
 
     @staticmethod
     def list_users_games(user):
@@ -120,15 +178,16 @@ class Game(models.Model):
         :param user:
         :return:
         """
-        games = Game.objects.filter(Q(player_1=user) | Q(player_2=user))
+        player_in_game = Q(player_1=user) | Q(player_2=user)
+        games = Game.objects.filter(is_active=True).filter(player_in_game)
         users_games = {
             'draw': {},
             'discard': {},
             'wait': {},
         }
         for game in games:
-            action, parsed_game = game.parse_game(user)
-            users_games[action][game.id] = parsed_game
+            game_state = game.get_state(user)
+            users_games[game_state['action']][game.id] = game_state
 
         return users_games
 
