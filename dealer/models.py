@@ -29,7 +29,10 @@ class Game(models.Model):
     # denormalize for convenience... only edit the Game model during the game,
     # and write-only to all other models.
     deck = ArrayField(base_field=CardField())
+    discard = ArrayField(base_field=CardField())
     top_card = CardField()
+    p1_hand = ArrayField(base_field=CardField())
+    p2_hand = ArrayField(base_field=CardField())
 
     p1_discards = models.BooleanField()
     p1_draws = models.BooleanField()
