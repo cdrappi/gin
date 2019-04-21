@@ -1,7 +1,9 @@
+import random
+
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-import random
+from django.db.models import Q
 
 ranks = list('23456789TJQKA')
 suits = set('cdhs')
@@ -72,13 +74,63 @@ class Game(models.Model):
             is_over=False,
             p1_wins=None,
             shuffles=0,
+            p1_draws=True,
+            p1_discards=False,
+            p2_draws=False,
+            p2_discards=False,
             **dealt_game
         )
         game.save()
         return game
 
+    def get_action(self, user):
+        """
 
+        :param user: (User)
+        :return: (str) 'draw', 'discard', 'wait'
+        """
+        is_p1 = user == self.player_1
+        is_p2 = not is_p1
 
+        if (is_p1 and self.p1_draws) or (is_p2 and self.p2_draws):
+            return 'draw'
+        elif (is_p1 and self.p1_discards) or (is_p2 and self.p2_discards):
+            return 'discard'
+        else:
+            return 'wait'
+
+    def parse_game(self, user):
+        """
+
+        :param user:
+        :return: (str, dict)
+        """
+        is_p1 = user == self.player_1
+        game_dict = {
+            'id': self.id,
+            'hand': self.p1_hand if is_p1 else self.p2_hand,
+            'top_card': self.top_card,
+        }
+        return self.get_action(user), game_dict
+
+    @staticmethod
+    def list_users_games(user):
+        """
+
+        :param user:
+        :return:
+        """
+        games = Game.objects.filter(Q(player_1=user) | Q(player_2=user))
+        users_games = {
+            'draw': [],
+            'discard': [],
+            'wait': [],
+        }
+        for game in games:
+            action, parsed_game = game.parse_game(user)
+            users_games[action].append(parsed_game)
+
+        return users_games
 
 
 class StartingHand(models.Model):
