@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+import random
 
 ranks = list('23456789TJQKA')
 suits = set('cdhs')
@@ -38,6 +39,46 @@ class Game(models.Model):
     p1_draws = models.BooleanField()
     p2_discards = models.BooleanField()
     p2_draws = models.BooleanField()
+
+    @staticmethod
+    def random_deck():
+        deck = [card for card, _ in CARD_CHOICES]
+        random.shuffle(deck)
+        return deck
+
+    @staticmethod
+    def deal_new_game():
+        deck = Game.random_deck()
+        return {
+            'p1_hand': deck[0:7],
+            'p2_hand': deck[7:14],
+            'top_card': deck[14],
+            'deck': deck[15:],
+            'discard': []
+        }
+
+    @staticmethod
+    def new_game(player_1_id, player_2_id):
+        """
+
+        :param player_1:
+        :param player_2:
+        :return:
+        """
+        dealt_game = Game.deal_new_game()
+        game = Game(
+            player_1_id=player_1_id,
+            player_2_id=player_2_id,
+            is_over=False,
+            p1_wins=None,
+            shuffles=0,
+            **dealt_game
+        )
+        game.save()
+        return game
+
+
+
 
 
 class StartingHand(models.Model):
