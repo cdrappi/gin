@@ -13,12 +13,13 @@ class CardField(models.CharField):
     """ e.g. 'Ah', 'Kc', '4s', etc. """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs, max_length=2, choices=CARD_CHOICES)
+        kwargs = {**kwargs, 'max_length': 2, 'choices': CARD_CHOICES}
+        super().__init__(*args, **kwargs)
 
 
 class Game(models.Model):
-    player_1 = models.ForeignKey(User, on_delete=models.SET_NULL)
-    player_2 = models.ForeignKey(User, on_delete=models.SET_NULL)
+    player_1 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='first_games')
+    player_2 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='second_games')
 
     is_over = models.BooleanField(default=False)
     p1_wins = models.NullBooleanField()
@@ -32,15 +33,15 @@ class Game(models.Model):
 
 
 class StartingHand(models.Model):
-    player = models.ForeignKey(User, on_delete=models.SET_NULL)
+    player = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     hand = ArrayField(base_field=CardField(), size=7)
 
 
 class CardAction(models.Model):
-    player = models.ForeignKey(User, on_delete=models.SET_NULL)
+    player = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    card = models.CharField()
+    card = CardField()
     turn = models.IntegerField()
     shuffle = models.IntegerField()
 
