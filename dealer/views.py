@@ -20,15 +20,11 @@ def create_game(request):
     :param request:
     :return:
     """
-    player_1_id = request.POST['player_1_id']
-    player_2_id = request.POST['player_2_id']
-    game = Game.new_game(player_1_id, player_2_id)
+    user = request.user
+    game = Game.new_game(user.id, request.POST['opponent_id'])
+    action, parsed_game = game.parse_game(user)
     return JsonResponse(
-        data={
-            'game_id': game.id,
-            'hand': game.p1_hand,
-            'top_card': game.top_card,
-        }
+        data={action: {game.id: parsed_game}}
     )
 
 

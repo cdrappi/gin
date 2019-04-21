@@ -25,6 +25,7 @@ class Game(models.Model):
     player_2 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='second_games')
 
     is_over = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     p1_wins = models.NullBooleanField()
 
     shuffles = models.IntegerField(default=0)
@@ -107,7 +108,6 @@ class Game(models.Model):
         """
         is_p1 = user == self.player_1
         game_dict = {
-            'id': self.id,
             'hand': self.p1_hand if is_p1 else self.p2_hand,
             'top_card': self.top_card,
         }
@@ -122,13 +122,13 @@ class Game(models.Model):
         """
         games = Game.objects.filter(Q(player_1=user) | Q(player_2=user))
         users_games = {
-            'draw': [],
-            'discard': [],
-            'wait': [],
+            'draw': {},
+            'discard': {},
+            'wait': {},
         }
         for game in games:
             action, parsed_game = game.parse_game(user)
-            users_games[action].append(parsed_game)
+            users_games[action][game.id] = parsed_game
 
         return users_games
 
