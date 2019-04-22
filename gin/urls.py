@@ -23,5 +23,5 @@ urlpatterns = [
     path('token-auth/', obtain_jwt_token),
     # path('', admin.site.urls),
     path('admin/', admin.site.urls),
-    path('api/', include('dealer.urls'))
+    path('dealer/', include('dealer.urls'))
 ]

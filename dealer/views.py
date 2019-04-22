@@ -34,20 +34,10 @@ class UserList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-def list_users(request):
-    """
-
-    :param request:
-    :return:
-    """
-    all_users = [
-        user
-        for user in User.objects.all().values('id', 'email')
-        # list all potential opponents
-        if user['id'] != request.user.id
-    ]
-    return JsonResponse(data=list(all_users), safe=False)
+    def get(self, request):
+        other_users = User.objects.exclude(id=request.user.id)
+        serializer = UserSerializer(other_users, many=True)
+        return Response(serializer.data)
 
 
 def create_game(request):
