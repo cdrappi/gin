@@ -9,4 +9,6 @@ urlpatterns = [
     path('create', views.create_game),
     path('draw', views.draw_card),
     path('discard', views.discard_card),
+    path('current_user/', views.current_user),
+    path('users/', views.UserList.as_view()),
 ]

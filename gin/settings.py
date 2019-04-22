@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'dealer',
+    # 'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_WHITELIST = (
     'localhost:3000',
 )
+
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'gin.utils.my_jwt_response_handler'
+}
