@@ -10,7 +10,8 @@ class Login extends Component {
     this.state = {
       displayed_form: "",
       logged_in: localStorage.getItem("token") ? true : false,
-      username: ""
+      username: "",
+      message: ""
     };
   }
 
@@ -43,10 +44,12 @@ class Login extends Component {
         this.setState({
           logged_in: true,
           displayed_form: "",
-          username: json.user.username
+          username: json.user.username,
+          message: ""
         });
       })
       .catch(err => {
+        this.setState({ message: "failure logging in. try again" });
         this.display_form();
         // throw new Error("invalid login");
       });
@@ -98,6 +101,7 @@ class Login extends Component {
 
     return (
       <div className="App">
+        <p>{this.state.message}</p>
         <Nav
           logged_in={this.state.logged_in}
           display_form={this.display_form}
