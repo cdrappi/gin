@@ -4,7 +4,7 @@ from django.urls import path
 from dealer import views
 
 urlpatterns = [
-    path('users', views.list_users),
+    # path('users', views.list_users),
     path('games', views.get_users_games),
     path('create', views.create_game),
     path('draw', views.draw_card),
