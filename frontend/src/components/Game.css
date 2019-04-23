@@ -1,0 +1,29 @@
+.game {
+    border-style: dashed;
+    width: 25%;
+}
+
+.card {
+    list-style-type: none;
+    display: inline-block;
+    margin: 0.25ch;
+    font-family: monospace;
+    font-size: 150%;
+    font-weight: bold;
+}
+
+.card-s {
+    color: black;
+}
+
+.card-c {
+    color: green;
+}
+
+.card-d {
+    color: blue;
+}
+
+.card-h {
+    color: red;
+}
