@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import datetime
 
 import dj_database_url
 
@@ -131,5 +132,6 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'gin.utils.my_jwt_response_handler'
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'gin.utils.my_jwt_response_handler',
+    # 'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=24),
 }

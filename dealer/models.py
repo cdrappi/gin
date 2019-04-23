@@ -163,59 +163,85 @@ class Game(models.Model):
         users_hand = self.users_hand(user)
         return self.hand_points(users_hand)
 
-    def hand_points(self, hand):
+    @staticmethod
+    def yield_hand_combos(hand):
+        for combo_3 in itertools.combinations(hand, 3):
+            combo_4 = [c for c in hand if c not in combo_3]
+            yield combo_3, combo_4
+
+    @classmethod
+    def combos_points(cls, combo_3, combo_4):
+        return cls.combo_points(combo_3) + cls.combo_points(combo_4)
+
+    @classmethod
+    def hand_points(cls, hand):
         """
 
         :param hand: ([str]) list of cards
         :return: (int)
         """
-
         points = 14 * 7
-        for combo_3 in itertools.combinations(hand, 3):
-            combo_4 = [c for c in hand if c not in combo_3]
-            combo_points = self.combo_points(combo_3) + self.combo_points(combo_4)
+        for combo_3, combo_4 in cls.yield_hand_combos(hand):
+            combo_points = cls.combos_points(combo_3, combo_4)
             if combo_points == 0:
                 return 0
             points = min(combo_points, points)
 
         return points
 
-    def combo_points(self, card_combo):
+    def sorted_hand(self, hand):
+        """
+        :param hand: ([str])
+        :return: ([str])
+        """
+        combo_3, combo_4 = min(self.yield_hand_combos(hand), key=lambda k: self.combos_points(k[0], k[1]))
+        sorted_hand = sorted(combo_3) + sorted(combo_4)
+        card_ranks = [c[0] for c in sorted_hand]
+        rank_points = self.calculate_points(card_ranks)
+        combo_points = self.combos_points(combo_3, combo_4)
+        print(sorted_hand, rank_points, combo_points, card_ranks)
+        if rank_points == combo_points:
+            return sorted(sorted_hand)
+        else:
+            return sorted_hand
+
+    @classmethod
+    def combo_points(cls, card_combo):
         """
 
         :param card_combo: ([str])
         :return: (int)
         """
         first_rank, first_suit = card_combo[0]
-        ranks = [card[0] for card in card_combo]
+        card_ranks = [card[0] for card in card_combo]
 
-        if all(r == first_rank for r in ranks):
+        if all(r == first_rank for r in card_ranks):
             # all cards are same rank
             return 0
 
         if any(card[1] != first_suit for card in card_combo):
             # cards are not of same rank and not of same suit,
             # so return the points
-            return self.calculate_points(ranks)
+            return cls.calculate_points(card_ranks)
 
         # NOTE: if we get to this point, cards have same suit
         # so we just need to check if they make a valid 3- or 4-straight
 
         # handle fact that aces can be 1 or 14
-        values_ace_as_1 = sorted(CARD_VALUES[r] for r in CARD_VALUES)
+        values_ace_as_1 = sorted(CARD_VALUES[r] for r in card_ranks)
         rank_combos = [values_ace_as_1]
-        if any(r == 'A' for r in ranks):
+        if any(r == 'A' for r in card_ranks):
             rank_combos.append(sorted(14 if value == 1 else value for value in values_ace_as_1))
 
         for rank_combo in rank_combos:
-            if self.ranks_make_a_straight(rank_combo):
+            if cls.ranks_make_a_straight(rank_combo):
                 return 0
 
-        return self.calculate_points(ranks)
+        return cls.calculate_points(card_ranks)
 
     @staticmethod
-    def calculate_points(ranks):
-        return sum(CARD_VALUES[r] for r in ranks)
+    def calculate_points(card_ranks):
+        return sum(CARD_VALUES[r] for r in card_ranks)
 
     @staticmethod
     def ranks_make_a_straight(rank_combo):
@@ -274,7 +300,7 @@ class Game(models.Model):
             'id': self.id,
             'opponent_id': opponent.id,
             'opponent_username': opponent.username,
-            'hand': self.users_hand(user),
+            'hand': self.sorted_hand(self.users_hand(user)),
             'top_of_discard': self.top_of_discard,
             **final_info
         }
