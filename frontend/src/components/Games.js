@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./Games.css";
+import Game from "./Game";
 
 class Games extends Component {
   constructor(props) {
@@ -28,10 +29,25 @@ class Games extends Component {
       });
   }
 
+  newGame(g) {
+    return (
+      <Game
+        key={g.id.toString()}
+        id={g.id}
+        action={g.action}
+        opponent_username={g.opponent_username}
+        hand={g.hand}
+        top_of_discard={g.top_of_discard}
+      />
+    );
+  }
+
   render() {
-    let draw_games = this.state.draw; // [<div>{"value"}</div>];
-    let discard_games = [<div>{"value"}</div>];
-    let wait_games = [<div>{"value"}</div>];
+    let draw_games = []; //this.state.draw; // [<div>{"value"}</div>];
+    let discard_games = []; //this.state.discard;
+    let wait_games = []; // [<Game />]; //
+
+    wait_games = this.state.wait.map(g => this.newGame(g));
 
     return (
       <div>

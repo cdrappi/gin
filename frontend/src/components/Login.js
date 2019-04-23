@@ -108,7 +108,7 @@ class Login extends Component {
           handle_logout={this.handle_logout}
         />{" "}
         {form}{" "}
-        <h3 class="greeting">
+        <h3 className="greeting">
           {" "}
           {this.state.logged_in
             ? `Hello, ${this.state.username}`

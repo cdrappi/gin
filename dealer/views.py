@@ -57,7 +57,6 @@ def get_users_games(request):
     :param request:
     :return:
     """
-    print(dir(request))
     users_games = Game.list_users_games(request.user)
     return JsonResponse(data=users_games)
 

@@ -259,23 +259,41 @@ class Game(models.Model):
         if not (is_p1 or is_p2):
             return {}
 
+        opponent = self.get_opponent(user)
+
+        final_info = {'action': self.get_action(user)}
         if self.is_complete:
-            return {
-                'id': self.id,
-                'hand': self.users_hand(user),
-                'top_of_discard': self.top_of_discard,
-                'action': Game.COMPLETE,
-                'opponent_hand': self.opponents_hand(user),
+            final_info = {
                 'points': self.p1_points if is_p1 else self.p2_points,
+                'opponent_hand': self.opponents_hand(user),
                 'opponent_points': self.p1_points if is_p2 else self.p2_points,
+                'action': Game.COMPLETE,
             }
 
         return {
             'id': self.id,
+            'opponent_id': opponent.id,
+            'opponent_username': opponent.username,
             'hand': self.users_hand(user),
             'top_of_discard': self.top_of_discard,
-            'action': self.get_action(user)
+            **final_info
         }
+
+    def get_opponent(self, user):
+        """
+
+        :param user: (User)
+        :return: (User)
+        """
+        is_p1 = self.is_player_1(user)
+        is_p2 = self.is_player_2(user)
+
+        if is_p1:
+            return self.player_2
+        elif is_p2:
+            return self.player_1
+        else:
+            raise Exception(f"{user} is neither player 1 or player 2 in {self}")
 
     @property
     def top_of_discard(self):
@@ -367,6 +385,7 @@ class Game(models.Model):
             Game.DRAW: [],
             Game.DISCARD: [],
             Game.WAIT: [],
+            Game.COMPLETE: [],
         }
         for game in games:
             game_state = game.get_state(user)

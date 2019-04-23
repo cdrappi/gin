@@ -7,7 +7,8 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Login /> <Games />
+        <Login />
+        <Games />
       </div>
     );
   }
