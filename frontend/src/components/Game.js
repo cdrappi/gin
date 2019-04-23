@@ -1,26 +1,29 @@
-import React from "react";
+import React, { Component } from "react";
 import "./Game.css";
 
-function Game(props) {
-  let hand = props.hand.map(card => (
-    <li key={card} className={`card card-${card[1]}`}>
-      {card[0]}
-    </li>
-  ));
-  return (
-    <div className="game">
-      <div className="opponent">
-        {props.opponent_username} ({props.id})
+class Game extends Component {
+  render() {
+    let html_hand = this.props.hand.map(card => (
+      <li key={card} className={`card card-${card[1]}`}>
+        {card[0]}
+      </li>
+    ));
+    return (
+      <div className="game">
+        <div className="opponent">
+          {this.props.opponent_username} ({this.props.id})
+        </div>
+        <div>
+          <ul className="hand">{html_hand}</ul>
+          {" || "}
+          <span className="card deck">?</span>{" "}
+          <span className={`card card-${this.props.top_of_discard[1]}`}>
+            {this.props.top_of_discard[0]}
+          </span>
+        </div>
       </div>
-      <div>
-        <ul className="hand">{hand}</ul>
-        {" || "}
-        <span className={`card card-${props.top_of_discard[1]}`}>
-          {props.top_of_discard[0]}
-        </span>
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
 // {

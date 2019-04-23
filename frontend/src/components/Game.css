@@ -1,13 +1,17 @@
 .game {
-    border-style: dashed;
+    border-style: solid;
     width: 20%;
+    border-width: 1px;
+    margin: 1px 0 1px 0;
 }
 
 .opponent {
+    padding: 10px 0 0 0;
     text-align: center;
 }
 
 .hand {
+    padding: 0 0 0 10px;
     display: inline-block;
 }
 
@@ -16,7 +20,7 @@
     display: inline-block;
     margin: 0.1ch;
     font-family: monospace;
-    font-size: 200%;
+    font-size: 225%;
     font-weight: bold;
     border-style: solid;
     border-width: 1px;
@@ -36,4 +40,9 @@
 
 .card-h {
     color: red;
+}
+
+.deck {
+    background-color: black;
+    color: pink;
 }
