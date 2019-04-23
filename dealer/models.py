@@ -189,19 +189,22 @@ class Game(models.Model):
 
         return points
 
+    @staticmethod
+    def sort_cards(cards):
+        return sorted(cards, key=lambda c: CARD_VALUES[c[0]])
+
     def sorted_hand(self, hand):
         """
         :param hand: ([str])
         :return: ([str])
         """
         combo_3, combo_4 = min(self.yield_hand_combos(hand), key=lambda k: self.combos_points(k[0], k[1]))
-        sorted_hand = sorted(combo_3) + sorted(combo_4)
+        sorted_hand = self.sort_cards(combo_4) + self.sort_cards(combo_3)
         card_ranks = [c[0] for c in sorted_hand]
         rank_points = self.calculate_points(card_ranks)
         combo_points = self.combos_points(combo_3, combo_4)
-        print(sorted_hand, rank_points, combo_points, card_ranks)
         if rank_points == combo_points:
-            return sorted(sorted_hand)
+            return self.sort_cards(sorted_hand)
         else:
             return sorted_hand
 

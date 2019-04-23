@@ -43,20 +43,20 @@ class Games extends Component {
   }
 
   render() {
-    let draw_games = []; //this.state.draw; // [<div>{"value"}</div>];
-    let discard_games = []; //this.state.discard;
-    let wait_games = []; // [<Game />]; //
-
-    wait_games = this.state.wait.map(g => this.newGame(g));
-
+    let draw_games = this.state.draw.map(g => this.newGame(g));
+    let discard_games = this.state.discard.map(g => this.newGame(g));
+    let wait_games = this.state.wait.map(g => this.newGame(g)); // [<Game />]; //
     return (
       <div>
-        <h3>YOUR DRAW</h3>
-        {draw_games}
-        <h3>YOUR DISCARD</h3>
-        {discard_games}
-        <h3>OPPONENT ACTS</h3>
-        {wait_games}
+        <h2>ALL GAMES</h2>
+        <div>
+          <h3>YOUR DRAW</h3>
+          {draw_games}
+          <h3>YOUR DISCARD</h3>
+          {discard_games}
+          <h3>OPPONENT ACTS</h3>
+          {wait_games}
+        </div>
       </div>
     );
   }
