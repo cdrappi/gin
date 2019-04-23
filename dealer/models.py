@@ -229,9 +229,6 @@ class Game(models.Model):
                 return False
         return True
 
-    def state_dict(self, user):
-        return {self.id: self.get_state(user)}
-
     def get_action(self, user):
         """
 
@@ -264,6 +261,7 @@ class Game(models.Model):
 
         if self.is_complete:
             return {
+                'id': self.id,
                 'hand': self.users_hand(user),
                 'top_of_discard': self.top_of_discard,
                 'action': Game.COMPLETE,
@@ -273,6 +271,7 @@ class Game(models.Model):
             }
 
         return {
+            'id': self.id,
             'hand': self.users_hand(user),
             'top_of_discard': self.top_of_discard,
             'action': self.get_action(user)
@@ -333,7 +332,8 @@ class Game(models.Model):
             player_1_id=player_1_id,
             player_2_id=player_2_id,
             is_complete=False,
-            p1_wins=None,
+            p1_points=None,
+            p2_points=None,
             shuffles=0,
             p1_draws=True,
             p1_discards=False,
@@ -364,13 +364,13 @@ class Game(models.Model):
         player_in_game = Q(player_1=user) | Q(player_2=user)
         games = Game.objects.filter(is_active=True).filter(player_in_game)
         users_games = {
-            Game.DRAW: {},
-            Game.DISCARD: {},
-            Game.WAIT: {},
+            Game.DRAW: [],
+            Game.DISCARD: [],
+            Game.WAIT: [],
         }
         for game in games:
             game_state = game.get_state(user)
-            users_games[game_state['action']][game.id] = game_state
+            users_games[game_state['action']].append(game_state)
 
         return users_games
 

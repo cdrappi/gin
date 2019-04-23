@@ -48,7 +48,7 @@ def create_game(request):
     """
     user = request.user
     game = Game.new_game(user.id, request.POST['opponent_id'])
-    return JsonResponse(data=game.state_dict(user))
+    return JsonResponse(data=game.get_state(user))
 
 
 def get_users_games(request):
@@ -57,6 +57,7 @@ def get_users_games(request):
     :param request:
     :return:
     """
+    print(dir(request))
     users_games = Game.list_users_games(request.user)
     return JsonResponse(data=users_games)
 
@@ -78,7 +79,7 @@ def draw_card(request):
     else:
         game.draw_random_card(user)
 
-    return JsonResponse(data=game.state_dict(user))
+    return JsonResponse(data=game.get_state(user))
 
 
 def discard_card(request):
@@ -99,4 +100,4 @@ def discard_card(request):
         return HttpResponseBadRequest(f"Invalid discard: {card} is not in your hand")
 
     game.discard_card(user, card)
-    return JsonResponse(data=game.state_dict(user))
+    return JsonResponse(data=game.get_state(user))

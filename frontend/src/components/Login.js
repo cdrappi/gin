@@ -100,7 +100,7 @@ class Login extends Component {
     }
 
     return (
-      <div className="App">
+      <div className="Login">
         <p>{this.state.message}</p>
         <Nav
           logged_in={this.state.logged_in}
@@ -108,7 +108,7 @@ class Login extends Component {
           handle_logout={this.handle_logout}
         />{" "}
         {form}{" "}
-        <h3>
+        <h3 class="greeting">
           {" "}
           {this.state.logged_in
             ? `Hello, ${this.state.username}`
