@@ -15,34 +15,23 @@
     display: inline-block;
 }
 
-.card {
-    list-style-type: none;
-    display: inline-block;
-    margin: 0.1ch;
-    font-family: monospace;
-    font-size: 225%;
+.final-score {
     font-weight: bold;
-    border-style: solid;
-    border-width: 1px;
+    font-size: 150%;
 }
 
-.card-s {
-    color: black;
-}
-
-.card-c {
+.final-score-win {
     color: green;
 }
 
-.card-d {
-    color: blue;
-}
-
-.card-h {
+.final-score-loss {
     color: red;
 }
 
-.deck {
-    background-color: black;
-    color: pink;
+.draw {
+    background-color: #d4f8d4;
+}
+
+.discard {
+    background-color: #ffe9ec;
 }

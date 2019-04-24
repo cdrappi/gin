@@ -133,5 +133,5 @@ CORS_ORIGIN_WHITELIST = (
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'gin.utils.my_jwt_response_handler',
-    # 'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=24),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=24),
 }

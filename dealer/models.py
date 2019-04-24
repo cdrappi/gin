@@ -55,6 +55,7 @@ class Game(models.Model):
     p2_discards = models.BooleanField()
     p2_draws = models.BooleanField()
 
+    PLAY = 'play'
     DRAW = 'draw'
     DISCARD = 'discard'
     WAIT = 'wait'
@@ -147,9 +148,9 @@ class Game(models.Model):
             self.is_active = False
             if self.is_player_1(user):
                 self.p1_points = 0
-                self.p2_points = self.calculate_points(self.player_2)
+                self.p2_points = self.user_points(self.player_2)
             else:
-                self.p1_points = self.calculate_points(self.player_1)
+                self.p1_points = self.user_points(self.player_1)
                 self.p2_points = 0
 
         self.save()
@@ -326,7 +327,10 @@ class Game(models.Model):
 
     @property
     def top_of_discard(self):
+        if len(self.discard) == 0:
+            return None
         return self.discard[-1]
+
 
     @property
     def top_of_deck(self):
@@ -409,16 +413,18 @@ class Game(models.Model):
         :return:
         """
         player_in_game = Q(player_1=user) | Q(player_2=user)
-        games = Game.objects.filter(is_active=True).filter(player_in_game)
+        games = Game.objects.filter(player_in_game).order_by('id')  # .filter(is_active=True)
         users_games = {
-            Game.DRAW: [],
-            Game.DISCARD: [],
+            Game.PLAY: [],
             Game.WAIT: [],
             Game.COMPLETE: [],
         }
         for game in games:
             game_state = game.get_state(user)
-            users_games[game_state['action']].append(game_state)
+            if game_state['action'] in {'draw', 'discard'}:
+                users_games['play'].append(game_state)
+            else:
+                users_games[game_state['action']].append(game_state)
 
         return users_games
 
