@@ -15,7 +15,23 @@
     display: inline-block;
 }
 
-.deck {
-    background-color: black;
-    color: pink;
+.final-score {
+    font-weight: bold;
+    font-size: 150%;
+}
+
+.final-score-win {
+    color: green;
+}
+
+.final-score-loss {
+    color: red;
+}
+
+.draw {
+    background-color: #d4f8d4;
+}
+
+.discard {
+    background-color: #ffe9ec;
 }

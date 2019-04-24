@@ -1,16 +1,24 @@
 import React, { Component } from "react";
 import "./Games.css";
 import Game from "./Game";
+import CompleteGame from "./CompleteGame";
+
+const ONE_SECOND = 1000;
 
 class Games extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      draw: [],
-      discard: [],
-      wait: []
+      play: [],
+      wait: [],
+      complete: []
     };
+    this.refreshGames = this.refreshGames.bind(this);
     this.refreshGames();
+  }
+
+  componentDidMount() {
+    setInterval(() => this.refreshGames(), 5 * ONE_SECOND);
   }
 
   refreshGames() {
@@ -22,9 +30,9 @@ class Games extends Component {
       .then(res => res.json())
       .then(json => {
         this.setState({
-          draw: json.draw,
-          discard: json.discard,
-          wait: json.wait
+          play: json.play,
+          wait: json.wait,
+          complete: json.complete
         });
       });
   }
@@ -38,24 +46,50 @@ class Games extends Component {
         opponent_username={g.opponent_username}
         hand={g.hand}
         top_of_discard={g.top_of_discard}
+        refreshGames={this.refreshGames}
+      />
+    );
+  }
+
+  completeGame(g) {
+    return (
+      <CompleteGame
+        key={g.id.toString()}
+        id={g.id}
+        opponent_username={g.opponent_username}
+        points={g.points}
+        opponent_points={g.opponent_points}
       />
     );
   }
 
   render() {
-    let draw_games = this.state.draw.map(g => this.newGame(g));
-    let discard_games = this.state.discard.map(g => this.newGame(g));
-    let wait_games = this.state.wait.map(g => this.newGame(g)); // [<Game />]; //
+    let play_games = this.state.play.map(g => this.newGame(g));
+    let wait_games = this.state.wait.map(g => this.newGame(g));
+    let complete_games = this.state.complete.map(g => this.completeGame(g));
     return (
       <div>
         <h2>ALL GAMES</h2>
+        {"  "}
+        <span onClick={this.refreshGames} className="reload">
+          &#x21bb;
+        </span>
         <div>
-          <h3>YOUR DRAW</h3>
-          {draw_games}
-          <h3>YOUR DISCARD</h3>
-          {discard_games}
-          <h3>OPPONENT ACTS</h3>
-          {wait_games}
+          <div>
+            <h3>
+              <span class="draw-legend">DRAW</span> OR{" "}
+              <span class="discard-legend">DISCARD</span>
+            </h3>
+            {play_games}
+          </div>
+          <div>
+            <h3>OPPONENT ACTS</h3>
+            {wait_games}
+          </div>
+          <div>
+            <h3>COMPLETED GAMES</h3>
+            {complete_games}
+          </div>
         </div>
       </div>
     );

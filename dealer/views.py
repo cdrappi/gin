@@ -1,5 +1,8 @@
+import json
+
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -61,6 +64,7 @@ def get_users_games(request):
     return JsonResponse(data=users_games)
 
 
+@csrf_exempt  # TODO: add CSRF token to React fetch headers
 def draw_card(request):
     """
 
@@ -68,19 +72,21 @@ def draw_card(request):
     :return:
     """
     user = request.user
-    game = Game.objects.get(id=request.GET['game_id'])
+    posted_data = json.loads(request.body)
+    game = Game.objects.get(id=posted_data['game_id'])
     action = game.get_action(user)
     if action != Game.DRAW:
         return HttpResponseBadRequest(f"Can't {Game.DRAW}. Please {action}")
 
-    if request.GET['from_discard'] == 'true':
-        game.draw_top_card(user)
+    if posted_data['from_discard']:
+        game.draw_from_discard(user)
     else:
-        game.draw_random_card(user)
+        game.draw_from_deck(user)
 
     return JsonResponse(data=game.get_state(user))
 
 
+@csrf_exempt  # TODO: add CSRF token to React fetch headers
 def discard_card(request):
     """
 
@@ -88,13 +94,14 @@ def discard_card(request):
     :return:
     """
     user = request.user
-    game = Game.objects.get(id=request.GET['game_id'])
+    posted_data = json.loads(request.body)
+    game = Game.objects.get(id=posted_data['game_id'])
     action = game.get_action(user)
 
     if action != Game.DISCARD:
         return HttpResponseBadRequest(f"Can't {Game.DISCARD}. Please {action}")
 
-    card = request.GET['card']
+    card = posted_data['card']
     if card not in game.users_hand(user):
         return HttpResponseBadRequest(f"Invalid discard: {card} is not in your hand")
 
