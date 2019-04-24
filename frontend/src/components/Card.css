@@ -1,0 +1,26 @@
+.card {
+    list-style-type: none;
+    display: inline-block;
+    margin: 0.1ch;
+    font-family: monospace;
+    font-size: 225%;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.card-s {
+    color: black;
+}
+
+.card-c {
+    color: green;
+}
+
+.card-d {
+    color: blue;
+}
+
+.card-h {
+    color: red;
+}
