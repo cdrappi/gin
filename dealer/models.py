@@ -422,7 +422,7 @@ class Game(models.Model):
         for game in games:
             game_state = game.get_state(user)
             if game_state['action'] in {'draw', 'discard'}:
-                users_games['play'].append(game_state)
+                users_games[Game.PLAY].append(game_state)
             else:
                 users_games[game_state['action']].append(game_state)
 

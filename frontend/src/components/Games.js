@@ -77,8 +77,8 @@ class Games extends Component {
         <div>
           <div>
             <h3>
-              <span class="draw-legend">DRAW</span> OR{" "}
-              <span class="discard-legend">DISCARD</span>
+              <span className="draw-legend">DRAW</span> OR{" "}
+              <span className="discard-legend">DISCARD</span>
             </h3>
             {play_games}
           </div>
