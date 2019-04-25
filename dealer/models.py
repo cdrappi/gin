@@ -338,6 +338,8 @@ class Game(models.Model):
         if final_info['action'] == "discard":
             final_info['drawn_card'] = self.last_draw
 
+        print(final_info)
+
         return {
             'id': self.id,
             'opponent_id': opponent.id,
