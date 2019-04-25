@@ -70,7 +70,11 @@ def get_users_games(request):
         return JsonResponse(data=users_games)
     # TODO: make more specific
     except:
-        return JsonResponse(data=[])
+        return JsonResponse(data={
+            Game.PLAY: [],
+            Game.WAIT: [],
+            Game.COMPLETE: [],
+        })
 
 
 @csrf_exempt  # TODO: add CSRF token to React fetch headers
