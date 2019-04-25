@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
-    path(r'^$', TemplateView.as_view(template_name='index.html')),
+    path('play/', TemplateView.as_view(template_name='index.html')),
     path('token-auth/', obtain_jwt_token),
     path('admin/', admin.site.urls),
     path('dealer/', include('dealer.urls'))
