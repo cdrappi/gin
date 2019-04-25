@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os
 import datetime
+import os
 
 import dj_database_url
 
@@ -27,7 +27,7 @@ SECRET_KEY = 'crg)ko!x+4f7j@610ve5c+cye_#yh!_e48fc@mhl!i)&m29k!='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['heyhowsgame.herokuapp.com', '127.0.0.1:8000']
 
 # Application definition
 
