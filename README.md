@@ -1,1 +1,1 @@
-# have you met my friend? ginberg?
+Come play [gin ricky](https://heyhowsgame.herokuapp.com)
