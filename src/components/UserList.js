@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./UserList.css";
 import User from "./User.js";
+import API_HOST from "./api-config";
 
 class UserList extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class UserList extends Component {
   }
 
   getUsers() {
-    fetch("http://localhost:8000/dealer/users/", {
+    fetch(`${API_HOST}/dealer/users/`, {
       method: "GET",
       headers: {
         Authorization: `JWT ${localStorage.getItem("token")}`
