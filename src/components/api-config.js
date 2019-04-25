@@ -1,11 +1,11 @@
-let backendHost;
+let API_HOST;
 
 const hostname = window && window.location && window.location.hostname;
 
 if (hostname === "heyhowsgame.herokuapp.com") {
-  backendHost = "https://heyhowsgame.herokuapp.com";
+  API_HOST = "https://heyhowsgame.herokuapp.com";
 } else {
-  backendHost = "http://localhost:8080";
+  API_HOST = "http://localhost:8080";
 }
 
-export const API_HOST = `${backendHost}`;
+export default API_HOST;
