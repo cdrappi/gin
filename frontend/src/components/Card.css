@@ -33,3 +33,12 @@
 .card-x {
     background-color: grey;
 }
+
+.card-y {
+    background-color: orange;
+}
+
+.last-draw {
+    border-left: 1ch;
+    border-left-style: dashed;
+}

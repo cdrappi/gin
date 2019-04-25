@@ -46,6 +46,7 @@ class Games extends Component {
         opponent_username={g.opponent_username}
         hand={g.hand}
         top_of_discard={g.top_of_discard}
+        last_draw={g.last_draw}
         refreshGames={this.refreshGames}
       />
     );

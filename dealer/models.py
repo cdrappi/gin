@@ -58,7 +58,7 @@ class Game(models.Model):
 
     # If player drew from discard, it is that card
     # If player drew from deck, it is None
-    last_draw = models.CharField(null=True)
+    last_draw = CardField(null=True)
 
     PLAY = 'play'
     DRAW = 'draw'
@@ -66,7 +66,7 @@ class Game(models.Model):
     WAIT = 'wait'
     COMPLETE = 'complete'
 
-    DECK_DUMMY_CARD = "?x"
+    DECK_DUMMY_CARD = "?y"
 
     def __str__(self):
         return f'Game(#{self.id}): {self.player_1} vs. {self.player_2}'
@@ -318,7 +318,7 @@ class Game(models.Model):
 
         opponent = self.get_opponent(user)
 
-        final_info = {'action': self.get_action(user)}
+        final_info = {'action': self.get_action(user), 'last_draw': None}
         if self.is_complete:
             final_info = {
                 'points': self.p1_points if is_p1 else self.p2_points,
@@ -326,6 +326,9 @@ class Game(models.Model):
                 'opponent_points': self.p1_points if is_p2 else self.p2_points,
                 'action': Game.COMPLETE,
             }
+
+        if final_info['action'] == "draw":
+            final_info['last_draw'] = self.last_draw
 
         return {
             'id': self.id,
