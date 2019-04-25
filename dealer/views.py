@@ -38,9 +38,12 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        other_users = User.objects.exclude(id=request.user.id)
-        serializer = UserSerializer(other_users, many=True)
-        return Response(serializer.data)
+        try:
+            other_users = User.objects.exclude(id=request.user.id)
+            serializer = UserSerializer(other_users, many=True)
+            return Response(serializer.data)
+        except:
+            return Response([])
 
 
 @csrf_exempt
@@ -62,8 +65,12 @@ def get_users_games(request):
     :param request:
     :return:
     """
-    users_games = Game.list_users_games(request.user)
-    return JsonResponse(data=users_games)
+    try:
+        users_games = Game.list_users_games(request.user)
+        return JsonResponse(data=users_games)
+    # TODO: make more specific
+    except:
+        return JsonResponse(data=[])
 
 
 @csrf_exempt  # TODO: add CSRF token to React fetch headers
