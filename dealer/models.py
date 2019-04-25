@@ -360,8 +360,10 @@ class Game(models.Model):
         if final_info['action'] == "discard":
             final_info['drawn_card'] = self.last_draw
 
+        hand = self.sorted_hand(self.users_hand(user))
         return {
-            'hand': self.sorted_hand(self.users_hand(user)),
+            'hand': hand,
+            'points': self.hand_points(hand),
             'top_of_discard': self.top_of_discard,
             'deck_length': len(self.deck),
             **common_items,
