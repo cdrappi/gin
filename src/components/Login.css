@@ -1,11 +1,11 @@
 .Login {
-    margin-left: 20px;
+    margin: 0 10px 0 10px;
     font-family: Georgia;
 }
 
 input {
     display: block;
-    margin: 5px 0 5px;
+    margin: 5px 0 5px 0;
 }
 
 .greeting {
