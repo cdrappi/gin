@@ -32,12 +32,11 @@ class Game extends Component {
 
     return (
       <div className={`game ${this.props.action}`}>
-        <div className="opponent">
-          {" "}
-          {this.props.opponent_username}({this.props.id}) (
+        <div className="game-info">
+          <span className="opponent">{this.props.opponent_username}</span> (
           {this.props.deck_length}
-          /52)
-        </div>{" "}
+          {"/52"})<span class="points">{this.props.points} pts</span>{" "}
+        </div>
         <div>
           <ul className="hand"> {html_hand} </ul> {" || "}{" "}
           {this.createCard("?x", false)}
