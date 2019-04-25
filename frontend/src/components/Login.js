@@ -47,6 +47,7 @@ class Login extends Component {
           username: json.user.username,
           message: ""
         });
+        window.location.reload();
       })
       .catch(err => {
         this.setState({ message: "failure logging in. try again" });

@@ -33,7 +33,9 @@ class Game extends Component {
       <div className={`game ${this.props.action}`}>
         <div className="opponent">
           {" "}
-          {this.props.opponent_username}({this.props.id}){" "}
+          {this.props.opponent_username}({this.props.id}) (
+          {this.props.deck_length}
+          /52)
         </div>{" "}
         <div>
           <ul className="hand"> {html_hand} </ul> {" || "}{" "}
