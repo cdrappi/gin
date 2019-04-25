@@ -197,8 +197,17 @@ class Game(models.Model):
     @staticmethod
     def yield_hand_combos(hand):
         for combo_3 in itertools.combinations(hand, 3):
-            combo_4 = [c for c in hand if c not in combo_3]
-            yield combo_3, combo_4
+            remaining_cards = [c for c in hand if c not in combo_3]
+            if len(remaining_cards) == 5:
+                # not using itertools.combinations(remaining_cards, 1) here,
+                # because it returns a tuple with 1 item rather than sole item
+                for left_out_card in remaining_cards:
+                    combo_4 = [c for c in remaining_cards if c != left_out_card]
+                    yield combo_3, combo_4, left_out_card
+            elif len(remaining_cards) == 4:
+                yield combo_3, remaining_cards
+            else:
+                raise Exception(f"incorrect number of cards ({len(hand)}) in hand")
 
     @classmethod
     def combos_points(cls, combo_3, combo_4):
@@ -212,7 +221,7 @@ class Game(models.Model):
         :return: (int)
         """
         points = 14 * 7
-        for combo_3, combo_4 in cls.yield_hand_combos(hand):
+        for combo_3, combo_4, *_ in cls.yield_hand_combos(hand):
             combo_points = cls.combos_points(combo_3, combo_4)
             if combo_points == 0:
                 return 0
@@ -229,14 +238,19 @@ class Game(models.Model):
         :param hand: ([str])
         :return: ([str])
         """
-        combo_3, combo_4 = min(self.yield_hand_combos(hand), key=lambda k: self.combos_points(k[0], k[1]))
-        sorted_hand = self.sort_cards(combo_3) + self.sort_cards(combo_4)
+        combo_3, combo_4, *maybe_last_card = min(self.yield_hand_combos(hand),
+                                                 key=lambda k: self.combos_points(k[0], k[1]))
+        sorted_combo_3 = self.sort_cards(combo_3)
+        sorted_combo_4 = self.sort_cards(combo_4)
+        sorted_hand = sorted_combo_3 + sorted_combo_4 + maybe_last_card
         rank_points = self.calculate_points([c[0] for c in sorted_hand])
         combo_points = self.combos_points(combo_3, combo_4)
         if rank_points == combo_points:
             return self.sort_cards(sorted_hand)
+        elif self.combo_points(combo_4) < self.combo_points(combo_3):
+            return sorted_combo_4 + sorted_combo_3 + maybe_last_card
         else:
-            return sorted_hand
+            return sorted_combo_3 + sorted_combo_4 + maybe_last_card
 
     @classmethod
     def combo_points(cls, card_combo):
@@ -319,16 +333,21 @@ class Game(models.Model):
             return {}
 
         opponent = self.get_opponent(user)
-
-        final_info = {'action': self.get_action(user), 'last_draw': None}
+        common_items = {
+            'id': self.id,
+            'opponent_id': opponent.id,
+            'opponent_username': opponent.username
+        }
         if self.is_complete:
-            final_info = {
+            return {
                 'points': self.p1_points if is_p1 else self.p2_points,
                 'opponent_hand': self.opponents_hand(user),
                 'opponent_points': self.p1_points if is_p2 else self.p2_points,
                 'action': Game.COMPLETE,
+                **common_items
             }
 
+        final_info = {'action': self.get_action(user), 'last_draw': None}
         if final_info['action'] == "draw":
             final_info['last_draw'] = (
                 self.last_draw
@@ -341,12 +360,10 @@ class Game(models.Model):
         print(final_info)
 
         return {
-            'id': self.id,
-            'opponent_id': opponent.id,
-            'opponent_username': opponent.username,
             'hand': self.sorted_hand(self.users_hand(user)),
             'top_of_discard': self.top_of_discard,
             'deck_length': len(self.deck),
+            **common_items,
             **final_info
         }
 
