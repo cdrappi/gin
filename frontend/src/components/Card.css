@@ -36,4 +36,5 @@
 
 .card-last-drawn {
     border-color: yellow;
+    border-width: 5px;
 }

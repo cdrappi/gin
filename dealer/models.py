@@ -245,6 +245,9 @@ class Game(models.Model):
         sorted_hand = sorted_combo_3 + sorted_combo_4 + maybe_last_card
         rank_points = self.calculate_points([c[0] for c in sorted_hand])
         combo_points = self.combos_points(combo_3, combo_4)
+        if maybe_last_card:
+            combo_points += self.calculate_points(maybe_last_card[0][0])
+
         if rank_points == combo_points:
             return self.sort_cards(sorted_hand)
         elif self.combo_points(combo_4) < self.combo_points(combo_3):
@@ -356,8 +359,6 @@ class Game(models.Model):
             )
         if final_info['action'] == "discard":
             final_info['drawn_card'] = self.last_draw
-
-        print(final_info)
 
         return {
             'hand': self.sorted_hand(self.users_hand(user)),
