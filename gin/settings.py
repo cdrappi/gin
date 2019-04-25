@@ -27,7 +27,7 @@ SECRET_KEY = 'crg)ko!x+4f7j@610ve5c+cye_#yh!_e48fc@mhl!i)&m29k!='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['heyhowsgame.herokuapp.com', '127.0.0.1:8000']
+ALLOWED_HOSTS = ['heyhowsgame.herokuapp.com', '127.0.0.1:8000', 'localhost']
 
 # Application definition
 
@@ -61,7 +61,9 @@ ROOT_URLCONF = 'gin.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'build')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
