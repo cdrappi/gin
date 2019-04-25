@@ -20,7 +20,7 @@ class UserList extends Component {
   }
 
   getUsers() {
-    if (this.props.isLoggedIn) {
+    if (this.state.isLoggedIn) {
       fetch(`${API_HOST}/dealer/users/`, {
         method: "GET",
         headers: {
