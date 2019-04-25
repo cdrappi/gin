@@ -1,0 +1,50 @@
+.game {
+    border-style: solid;
+    width: 25%;
+    border-width: 1px;
+    margin: 1px 0 1px 0;
+    position: relative;
+}
+
+.game-info {
+    text-align: center;
+}
+
+.opponent {
+    text-align: center;
+    font-weight: bold;
+}
+
+.hand {
+    text-align: center;
+    display: inline-block;
+}
+
+.final-score {
+    font-weight: bold;
+    font-size: 150%;
+}
+
+.final-score-win {
+    color: green;
+}
+
+.final-score-loss {
+    color: red;
+}
+
+.draw {
+    background-color: #d4f8d4;
+}
+
+.discard {
+    background-color: #ffe9ec;
+}
+
+.points {
+    top: 0px;
+    right: 0px;
+    padding: 10px 10px 0 0;
+    position: absolute;
+    font-family: monospace;
+}

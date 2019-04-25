@@ -1,0 +1,16 @@
+.Login {
+    margin-left: 20px;
+    font-family: Georgia;
+}
+
+input {
+    display: block;
+    margin: 5px 0 5px;
+}
+
+.greeting {
+    border-style: dashed;
+    width: 20%;
+    padding: 1% 0 1% 0;
+    text-align: center;
+}
