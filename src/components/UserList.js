@@ -21,18 +21,23 @@ class UserList extends Component {
 
   getUsers() {
     if (this.state.isLoggedIn) {
-      fetch(`${API_HOST}/dealer/users/`, {
-        method: "GET",
-        headers: {
-          Authorization: `JWT ${localStorage.getItem("token")}`
-        }
-      })
-        .then(res => res.json())
-        .then(json => {
-          this.setState({
-            users: json
+      try {
+        fetch(`${API_HOST}/dealer/users/`, {
+          method: "GET",
+          headers: {
+            Authorization: `JWT ${localStorage.getItem("token")}`
+          }
+        })
+          .then(res => res.json())
+          .then(json => {
+            this.setState({
+              users: json
+            });
           });
-        });
+      } catch {
+        // assume token is stale, make user login again
+        localStorage.removeItem("token");
+      }
     }
   }
   render() {
