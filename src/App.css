@@ -1,3 +1,7 @@
+html {
+    max-width: 4in;
+}
+
 .App {
     margin-left: 20px;
 }

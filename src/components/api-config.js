@@ -9,6 +9,6 @@ if (hostname === "heyhowsgame.herokuapp.com") {
 }
 
 // for using local npm to ping heroku server
-// API_HOST = "https://heyhowsgame.herokuapp.com";
+API_HOST = "https://heyhowsgame.herokuapp.com";
 
 export default API_HOST;
