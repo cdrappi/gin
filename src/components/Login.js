@@ -10,23 +10,38 @@ class Login extends Component {
     super(props);
     this.state = {
       displayed_form: "",
-      logged_in: localStorage.getItem("token") ? true : false,
+      logged_in: false,
       username: "",
       message: ""
     };
   }
 
+  getToken() {
+    return localStorage.getItem("token");
+  }
+
+  deleteToken() {
+    localStorage.removeItem("token");
+  }
+
   componentDidMount() {
-    if (this.state.logged_in) {
-      fetch(`${API_HOST}/dealer/current_user/`, {
-        headers: {
-          Authorization: `JWT ${localStorage.getItem("token")}`
-        }
-      })
-        .then(res => res.json())
-        .then(json => {
-          this.setState({ username: json.username });
-        });
+    if (this.getToken()) {
+      try {
+        fetch(`${API_HOST}/dealer/current_user/`, {
+          headers: {
+            Authorization: `JWT ${localStorage.getItem("token")}`
+          }
+        })
+          .then(res => res.json())
+          .then(json => {
+            this.setState({
+              username: json.username,
+              logged_in: true
+            });
+          });
+      } catch {
+        this.deleteToken();
+      }
     }
   }
 

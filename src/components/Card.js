@@ -15,7 +15,6 @@ class Card extends Component {
   }
 
   handleClick() {
-    console.log(this.state);
     if (this.props.action === "discard" && this.props.inHand) {
       let card = this.props.rank + this.props.suit;
       fetch(`${API_HOST}/dealer/discard/`, {

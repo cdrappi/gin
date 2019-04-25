@@ -35,7 +35,7 @@ class Game extends Component {
         <div className="game-info">
           <span className="opponent">{this.props.opponent_username}</span> (
           {this.props.deck_length}
-          {"/52"})<span class="points">{this.props.points} pts</span>{" "}
+          {"/52"})<span className="points">{this.props.points} pts</span>{" "}
         </div>
         <div>
           <ul className="hand"> {html_hand} </ul> {" || "}{" "}
