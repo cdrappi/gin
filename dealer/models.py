@@ -66,6 +66,8 @@ class Game(models.Model):
     WAIT = 'wait'
     COMPLETE = 'complete'
 
+    DECK_DUMMY_CARD = "?x"
+
     def __str__(self):
         return f'Game(#{self.id}): {self.player_1} vs. {self.player_2}'
 
@@ -120,6 +122,7 @@ class Game(models.Model):
             self.p2_discards = True
 
         self.turns += 1
+        self.last_draw = card_drawn if from_discard else Game.DECK_DUMMY_CARD
         self.save()
         CardDrawn.objects.create(
             player=user,
