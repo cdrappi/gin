@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./User.css";
+import API_HOST from "./api-config";
 
 class User extends Component {
   constructor(props) {
@@ -9,7 +10,7 @@ class User extends Component {
   }
 
   challengeUser(user_id) {
-    fetch("http://localhost:8000/dealer/create/", {
+    fetch(`${API_HOST}/dealer/create/`, {
       method: "POST",
       headers: {
         Authorization: `JWT ${localStorage.getItem("token")}`

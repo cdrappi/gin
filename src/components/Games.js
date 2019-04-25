@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./Games.css";
 import Game from "./Game";
 import CompleteGame from "./CompleteGame";
+import API_HOST from "./api-config";
 
 const ONE_SECOND = 1000;
 
@@ -22,7 +23,7 @@ class Games extends Component {
   }
 
   refreshGames() {
-    fetch("http://localhost:8000/dealer/games/", {
+    fetch(`${API_HOST}/dealer/games/`, {
       headers: {
         Authorization: `JWT ${localStorage.getItem("token")}`
       }

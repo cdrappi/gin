@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./Card.css";
+import API_HOST from "./api-config";
 
 class Card extends Component {
   constructor(props) {
@@ -17,7 +18,7 @@ class Card extends Component {
     console.log(this.state);
     if (this.props.action === "discard" && this.props.inHand) {
       let card = this.props.rank + this.props.suit;
-      fetch("http://localhost:8000/dealer/discard/", {
+      fetch(`${API_HOST}/dealer/discard/`, {
         method: "POST",
         headers: {
           Authorization: `JWT ${localStorage.getItem("token")}`,
@@ -33,7 +34,7 @@ class Card extends Component {
           this.props.refreshGames();
         });
     } else if (this.props.action === "draw" && !this.props.inHand) {
-      fetch("http://localhost:8000/dealer/draw/", {
+      fetch(`${API_HOST}/dealer/draw/`, {
         method: "POST",
         headers: {
           Authorization: `JWT ${localStorage.getItem("token")}`,

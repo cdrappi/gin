@@ -3,6 +3,7 @@ import Nav from "./Nav";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import "./Login.css";
+import API_HOST from "./api-config";
 
 class Login extends Component {
   constructor(props) {
@@ -17,7 +18,7 @@ class Login extends Component {
 
   componentDidMount() {
     if (this.state.logged_in) {
-      fetch("http://localhost:8000/dealer/current_user/", {
+      fetch(`${API_HOST}/dealer/current_user/`, {
         headers: {
           Authorization: `JWT ${localStorage.getItem("token")}`
         }
@@ -31,7 +32,7 @@ class Login extends Component {
 
   handle_login = (e, data) => {
     e.preventDefault();
-    fetch("http://localhost:8000/token-auth/", {
+    fetch(`${API_HOST}/token-auth/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -58,7 +59,7 @@ class Login extends Component {
 
   handle_signup = (e, data) => {
     e.preventDefault();
-    fetch("http://localhost:8000/dealer/users/", {
+    fetch(`${API_HOST}/dealer/users/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
