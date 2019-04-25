@@ -15,4 +15,12 @@ pip-delete-this-directory.txt
 # Environments
 gin_venv/
 
+# Editors: PyCharm and VSCode
 .idea/*
+/.vscode
+
+# Frontend
+/node_modules
+/coverage
+/build
+/staticfiles
