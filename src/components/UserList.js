@@ -7,6 +7,7 @@ class UserList extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoggedIn: localStorage.getItem("token") ? true : false,
       users: []
     };
 
@@ -19,24 +20,23 @@ class UserList extends Component {
   }
 
   getUsers() {
-    fetch(`${API_HOST}/dealer/users/`, {
-      method: "GET",
-      headers: {
-        Authorization: `JWT ${localStorage.getItem("token")}`
-      }
-    })
-      .then(res => res.json())
-      .then(json => {
-        this.setState({
-          users: json
+    if (this.props.isLoggedIn) {
+      fetch(`${API_HOST}/dealer/users/`, {
+        method: "GET",
+        headers: {
+          Authorization: `JWT ${localStorage.getItem("token")}`
+        }
+      })
+        .then(res => res.json())
+        .then(json => {
+          this.setState({
+            users: json
+          });
         });
-      });
+    }
   }
   render() {
-    let users = [];
-    if (this.state.users) {
-      users = this.state.users.map(u => this.createUser(u));
-    }
+    let users = this.state.users.map(u => this.createUser(u));
     return (
       <div>
         <h2>Create a game</h2>
