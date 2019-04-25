@@ -305,6 +305,7 @@ class Game(models.Model):
             'opponent_username': opponent.username,
             'hand': self.sorted_hand(self.users_hand(user)),
             'top_of_discard': self.top_of_discard,
+            'deck_length': len(self.deck),
             **final_info
         }
 
