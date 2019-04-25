@@ -12,6 +12,7 @@ class Game extends Component {
         inHand={inHand}
         action={this.props.action}
         game_id={this.props.id}
+        is_last_drawn={card === this.props.drawn_card}
         refreshGames={this.props.refreshGames}
       />
     );

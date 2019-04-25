@@ -12,22 +12,18 @@
 
 .card-s {
     background-color: black;
-    border-color: black;
 }
 
 .card-c {
     background-color: green;
-    border-color: green;
 }
 
 .card-d {
-    background-color: blue;
     background-color: blue;
 }
 
 .card-h {
     background-color: red;
-    border-color: red;
 }
 
 .card-x {
@@ -36,4 +32,8 @@
 
 .card-y {
     background-color: orange;
+}
+
+.card-last-drawn {
+    border-color: yellow;
 }

@@ -59,6 +59,7 @@ class Game(models.Model):
     # If player drew from discard, it is that card
     # If player drew from deck, it is None
     last_draw = CardField(null=True)
+    last_draw_from_discard = models.NullBooleanField()
 
     PLAY = 'play'
     DRAW = 'draw'
@@ -122,7 +123,8 @@ class Game(models.Model):
             self.p2_discards = True
 
         self.turns += 1
-        self.last_draw = card_drawn if from_discard else Game.DECK_DUMMY_CARD
+        self.last_draw = card_drawn
+        self.last_draw_from_discard = from_discard
         self.save()
         CardDrawn.objects.create(
             player=user,
@@ -328,7 +330,13 @@ class Game(models.Model):
             }
 
         if final_info['action'] == "draw":
-            final_info['last_draw'] = self.last_draw
+            final_info['last_draw'] = (
+                self.last_draw
+                if self.last_draw_from_discard
+                else Game.DECK_DUMMY_CARD
+            )
+        if final_info['action'] == "discard":
+            final_info['drawn_card'] = self.last_draw
 
         return {
             'id': self.id,
