@@ -43,14 +43,16 @@ class UserList(APIView):
         return Response(serializer.data)
 
 
+@csrf_exempt
 def create_game(request):
     """
 
     :param request:
     :return:
     """
+    posted_data = json.loads(request.body)
     user = request.user
-    game = Game.new_game(user.id, request.POST['opponent_id'])
+    game = Game.new_game(user.id, posted_data['opponent_id'])
     return JsonResponse(data=game.get_state(user))
 
 

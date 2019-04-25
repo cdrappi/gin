@@ -18,7 +18,7 @@ class Games extends Component {
   }
 
   componentDidMount() {
-    setInterval(() => this.refreshGames(), 5 * ONE_SECOND);
+    setInterval(() => this.refreshGames(), 1 * ONE_SECOND);
   }
 
   refreshGames() {
