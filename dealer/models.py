@@ -41,6 +41,7 @@ class Game(models.Model):
     p1_points = models.IntegerField(null=True)
     p2_points = models.IntegerField(null=True)
 
+    turns = models.IntegerField(default=0)
     shuffles = models.IntegerField(default=0)
 
     # denormalize for convenience... only edit the Game model during the game,
@@ -54,6 +55,10 @@ class Game(models.Model):
     p1_draws = models.BooleanField()
     p2_discards = models.BooleanField()
     p2_draws = models.BooleanField()
+
+    # If player drew from discard, it is that card
+    # If player drew from deck, it is None
+    last_draw = models.CharField(null=True)
 
     PLAY = 'play'
     DRAW = 'draw'
@@ -91,9 +96,11 @@ class Game(models.Model):
         assert (is_p1 and self.p1_draws) or (is_p2 and self.p2_draws)
 
         if from_discard:
-            self.add_to_hand(user, self.top_of_discard)
+            card_drawn = self.top_of_discard
+            self.add_to_hand(user, card_drawn)
             self.discard = self.discard[:-1]
         else:
+            card_drawn = self.top_of_deck
             self.add_to_hand(user, self.top_of_deck)
             self.deck = self.deck[1:]
             if len(self.deck) == 0:
@@ -111,7 +118,17 @@ class Game(models.Model):
         elif is_p2:
             self.p2_draws = False
             self.p2_discards = True
+
+        self.turns += 1
         self.save()
+        CardDrawn.objects.create(
+            player=user,
+            game=self,
+            card=card_drawn,
+            turn=self.turns,
+            shuffle=self.shuffles,
+            from_discard=from_discard
+        )
 
     def draw_from_deck(self, user):
         self.draw_card(user, from_discard=False)
@@ -153,7 +170,15 @@ class Game(models.Model):
                 self.p1_points = self.user_points(self.player_1)
                 self.p2_points = 0
 
+        self.turns += 1
         self.save()
+        CardDiscarded.objects.create(
+            player=user,
+            game=self,
+            card=card,
+            turn=self.turns,
+            shuffle=self.shuffles,
+        )
 
     def user_points(self, user):
         """
@@ -330,7 +355,6 @@ class Game(models.Model):
             return None
         return self.discard[-1]
 
-
     @property
     def top_of_deck(self):
         return self.deck[0]
@@ -385,6 +409,7 @@ class Game(models.Model):
             p1_points=None,
             p2_points=None,
             shuffles=0,
+            last_draw=None,
             p1_draws=True,
             p1_discards=False,
             p2_draws=False,
