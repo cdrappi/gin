@@ -52,11 +52,12 @@ class Card extends Component {
   }
 
   render() {
+    let cssIsLastDrawn = this.props.is_last_drawn ? "card-last-drawn" : "";
     return (
       <span>
         <li
           key={`${this.props.suit}${this.props.rank}`}
-          className={`card card-${this.props.suit}`}
+          className={`card card-${this.props.suit} ${cssIsLastDrawn}`}
           onClick={this.handleClick}
         >
           {this.props.rank}{" "}

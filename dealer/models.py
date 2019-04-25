@@ -59,6 +59,7 @@ class Game(models.Model):
     # If player drew from discard, it is that card
     # If player drew from deck, it is None
     last_draw = CardField(null=True)
+    last_draw_from_discard = models.NullBooleanField()
 
     PLAY = 'play'
     DRAW = 'draw'
@@ -122,7 +123,8 @@ class Game(models.Model):
             self.p2_discards = True
 
         self.turns += 1
-        self.last_draw = card_drawn if from_discard else Game.DECK_DUMMY_CARD
+        self.last_draw = card_drawn
+        self.last_draw_from_discard = from_discard
         self.save()
         CardDrawn.objects.create(
             player=user,
@@ -243,6 +245,9 @@ class Game(models.Model):
         sorted_hand = sorted_combo_3 + sorted_combo_4 + maybe_last_card
         rank_points = self.calculate_points([c[0] for c in sorted_hand])
         combo_points = self.combos_points(combo_3, combo_4)
+        if maybe_last_card:
+            combo_points += self.calculate_points(maybe_last_card[0][0])
+
         if rank_points == combo_points:
             return self.sort_cards(sorted_hand)
         elif self.combo_points(combo_4) < self.combo_points(combo_3):
@@ -347,7 +352,13 @@ class Game(models.Model):
 
         final_info = {'action': self.get_action(user), 'last_draw': None}
         if final_info['action'] == "draw":
-            final_info['last_draw'] = self.last_draw
+            final_info['last_draw'] = (
+                self.last_draw
+                if self.last_draw_from_discard
+                else Game.DECK_DUMMY_CARD
+            )
+        if final_info['action'] == "discard":
+            final_info['drawn_card'] = self.last_draw
 
         return {
             'hand': self.sorted_hand(self.users_hand(user)),
