@@ -15,13 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import include
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path
 from django.views.generic import TemplateView
 
 from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
-    path('/', TemplateView.as_view(template_name='index.html')),
+    path(r'^$', TemplateView.as_view(template_name='index.html')),
     path('token-auth/', obtain_jwt_token),
     path('admin/', admin.site.urls),
     path('dealer/', include('dealer.urls'))
