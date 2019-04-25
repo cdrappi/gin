@@ -23,11 +23,11 @@ class User extends Component {
 
   render() {
     return (
-      <div>
-        <button onClick={this.challengeUser}>
+      <span>
+        <button className="user-button" onClick={this.challengeUser}>
           {this.props.username} ({this.props.id})
         </button>
-      </div>
+      </span>
     );
   }
 }
