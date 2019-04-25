@@ -39,7 +39,10 @@ class Game extends Component {
           <ul className="hand"> {html_hand} </ul> {" || "}{" "}
           {this.createCard("?x", false)}
           {discard}
-          <span className="lastDraw">{last_draw}</span>
+          <span>
+            {this.props.last_draw ? " | " : ""}
+            {last_draw}
+          </span>
         </div>{" "}
       </div>
     );
