@@ -200,9 +200,8 @@ class Game(models.Model):
         :return: ([str])
         """
         combo_3, combo_4 = min(self.yield_hand_combos(hand), key=lambda k: self.combos_points(k[0], k[1]))
-        sorted_hand = self.sort_cards(combo_4) + self.sort_cards(combo_3)
-        card_ranks = [c[0] for c in sorted_hand]
-        rank_points = self.calculate_points(card_ranks)
+        sorted_hand = self.sort_cards(combo_3) + self.sort_cards(combo_4)
+        rank_points = self.calculate_points([c[0] for c in sorted_hand])
         combo_points = self.combos_points(combo_3, combo_4)
         if rank_points == combo_points:
             return self.sort_cards(sorted_hand)
