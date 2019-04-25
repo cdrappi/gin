@@ -33,7 +33,10 @@ class UserList extends Component {
       });
   }
   render() {
-    let users = this.state.users.map(u => this.createUser(u));
+    let users = [];
+    if (this.state.users) {
+      users = this.state.users.map(u => this.createUser(u));
+    }
     return (
       <div>
         <h2>Create a game</h2>
