@@ -3,12 +3,12 @@
     text-align: center;
     margin: 0.05ch;
     font-family: monospace;
-    font-size: 140%;
+    font-size: 120%;
     font-weight: bold;
     border-style: solid;
     border-width: 0.1px;
     color: white;
-    width: 0.24in
+    width: 0.22in;
 }
 
 button {
