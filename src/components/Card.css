@@ -1,12 +1,13 @@
 .card {
     display: inline-block;
-    margin: 0.2ch;
+    margin: 0.1ch;
     font-family: monospace;
-    font-size: 200%;
+    font-size: 125%;
     font-weight: bold;
     border-style: solid;
     border-width: 1px;
     color: white;
+    width: 0.30in
 }
 
 button {
@@ -39,7 +40,7 @@ button {
 
 .card-last-drawn {
     border-color: yellow;
-    border-width: 5px;
+    border-width: 2.5px;
 }
 
 .card-can-click {
