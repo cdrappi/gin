@@ -41,7 +41,14 @@ class UserList extends Component {
     }
   }
   render() {
-    let users = this.state.users.map(u => this.createUser(u));
+    // TODO: clean this up going forward...
+    // no idea of best pattern right now and just wanna play some fucking gin
+    let users = [];
+    try {
+      users = this.state.users.map(u => this.createUser(u));
+    } catch {
+      localStorage.removeItem("token");
+    }
     return (
       <div className="user-list">
         <h2>Create a game</h2>
