@@ -17,6 +17,7 @@
 .hand {
     text-align: center;
     display: inline-block;
+    margin: 0 5px 0 5px
 }
 
 .final-score {
@@ -43,7 +44,7 @@
 .points {
     top: 0px;
     right: 0px;
-    padding: 10px 10px 0 0;
+    padding: 1px 5px 0 0;
     position: absolute;
     font-family: monospace;
 }

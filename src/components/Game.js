@@ -38,7 +38,7 @@ class Game extends Component {
           {"/52"})<span className="points">{this.props.points} pts</span>{" "}
         </div>
         <div>
-          <ul className="hand"> {html_hand} </ul> {" || "}{" "}
+          <span className="hand"> {html_hand} </span> {" || "}{" "}
           {this.createCard("?x", false)}
           {discard}
           <span>

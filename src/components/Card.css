@@ -1,13 +1,16 @@
 .card {
-    list-style-type: none;
     display: inline-block;
-    margin: 0.1ch;
+    margin: 0.2ch;
     font-family: monospace;
     font-size: 200%;
     font-weight: bold;
     border-style: solid;
     border-width: 1px;
     color: white;
+}
+
+button {
+    display: inline-block;
 }
 
 .card-s {
@@ -37,4 +40,8 @@
 .card-last-drawn {
     border-color: yellow;
     border-width: 5px;
+}
+
+.card-can-click {
+    cursor: pointer;
 }
