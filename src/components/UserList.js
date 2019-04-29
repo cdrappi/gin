@@ -37,6 +37,7 @@ class UserList extends Component {
       } catch {
         // assume token is stale, make user login again
         localStorage.removeItem("token");
+        window.location.reload();
       }
     }
   }
@@ -48,6 +49,7 @@ class UserList extends Component {
       users = this.state.users.map(u => this.createUser(u));
     } catch {
       localStorage.removeItem("token");
+      window.location.reload();
     }
     return (
       <div className="user-list">
