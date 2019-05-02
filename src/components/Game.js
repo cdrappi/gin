@@ -20,9 +20,12 @@ class Game extends Component {
   }
 
   render() {
-    let html_hand = this.props.hand.map(card =>
-      this.createCard(card, true, false)
-    );
+    let hand_r1 = this.props.hand.slice(0, 4);
+    let hand_r2 = this.props.hand.slice(4, this.props.hand.length);
+
+    let cards_r1 = hand_r1.map(c => this.createCard(c, true, false));
+    let cards_r2 = hand_r2.map(c => this.createCard(c, true, false));
+
     let discard = " ";
     if (this.props.top_of_discard) {
       discard = this.createCard(this.props.top_of_discard, false, false);
@@ -40,15 +43,16 @@ class Game extends Component {
           {this.props.deck_length}
           {"/52"})<span className="points">{this.props.points} pts</span>{" "}
         </div>
-        <div>
-          <span className="hand"> {html_hand} </span> {" | "}{" "}
-          {this.createCard("?x", false)}
-          {discard}
-          <span>
-            {this.props.last_draw ? " | " : ""}
-            {last_draw}
-          </span>
-        </div>{" "}
+        <div className="game-cards">
+          <div className="hand"> {cards_r1} </div>
+          <div className="draw-discard-card">
+            {this.createCard("?x", false)}
+          </div>
+          <div className="last-drawn-card"> </div>
+          <div className="hand"> {cards_r2} </div>
+          <div className="draw-discard-card">{discard}</div>
+          <div className="last-drawn-card">{last_draw}</div>
+        </div>
       </div>
     );
   }
