@@ -14,8 +14,14 @@ class Card extends Component {
   isDiscard = () => !this.props.inHand && this.props.rank !== "?";
   isDummyCard = () => this.props.rank === "?" && this.props.suit === "y";
   canDiscard = () => this.props.action === "discard" && this.props.inHand;
-  canDraw = () =>
-    this.props.action === "draw" && !this.props.inHand && !this.isDummyCard();
+  canDraw() {
+    return (
+      this.props.action === "draw" &&
+      !this.props.inHand &&
+      !this.props.is_last_draw
+    );
+  }
+
   isClickable = () => this.canDiscard() || this.canDraw();
 
   handleClick() {

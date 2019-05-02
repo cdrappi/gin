@@ -3,7 +3,7 @@ import "./Game.css";
 import Card from "./Card.js";
 
 class Game extends Component {
-  createCard(card, inHand) {
+  createCard(card, inHand, isLastDraw) {
     return (
       <Card
         key={card}
@@ -14,20 +14,23 @@ class Game extends Component {
         game_id={this.props.id}
         is_last_drawn={card === this.props.drawn_card}
         refreshGames={this.props.refreshGames}
+        is_last_draw={isLastDraw}
       />
     );
   }
 
   render() {
-    let html_hand = this.props.hand.map(card => this.createCard(card, true));
+    let html_hand = this.props.hand.map(card =>
+      this.createCard(card, true, false)
+    );
     let discard = " ";
     if (this.props.top_of_discard) {
-      discard = this.createCard(this.props.top_of_discard, false);
+      discard = this.createCard(this.props.top_of_discard, false, false);
     }
 
     let last_draw = " ";
     if (this.props.last_draw) {
-      last_draw = this.createCard(this.props.last_draw, false);
+      last_draw = this.createCard(this.props.last_draw, false, true);
     }
 
     return (
