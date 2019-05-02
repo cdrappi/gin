@@ -21,16 +21,16 @@ class Game extends Component {
 
   render() {
     let html_hand = this.props.hand.map(card =>
-      this.createCard(card, true, true)
+      this.createCard(card, true, false)
     );
     let discard = " ";
     if (this.props.top_of_discard) {
-      discard = this.createCard(this.props.top_of_discard, false, true);
+      discard = this.createCard(this.props.top_of_discard, false, false);
     }
 
     let last_draw = " ";
     if (this.props.last_draw) {
-      last_draw = this.createCard(this.props.last_draw, false, false);
+      last_draw = this.createCard(this.props.last_draw, false, true);
     }
 
     return (
