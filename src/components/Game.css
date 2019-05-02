@@ -15,12 +15,6 @@
     font-weight: bold;
 }
 
-.hand {
-    text-align: center;
-    display: inline-block;
-    margin: 5px 5px 5px 5px
-}
-
 .final-score {
     font-weight: bold;
     font-size: 150%;
@@ -32,6 +26,33 @@
 
 .final-score-loss {
     color: red;
+}
+
+.game-cards {
+    display: grid;
+    grid-gap: 1px 1px;
+    /* grid-template-columns: 6; */
+    grid-template-rows: 45%;
+}
+
+.hand {
+    /* text-align: center; */
+    /* display: inline-block; */
+    grid-column: 1 / span 4;
+    /* margin: 5px 5px 5px 5px; */
+    margin: auto;
+}
+
+.draw-discard-card {
+    grid-column: 5 / span 1;
+    /* margin: 5px 5px 5px 5px; */
+    margin: auto;
+}
+
+.last-drawn-card {
+    grid-column: 6 / span 1;
+    /* margin: 5px 5px 5px 5px; */
+    margin: auto;
 }
 
 .draw {
