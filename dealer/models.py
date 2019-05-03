@@ -32,7 +32,23 @@ class CardField(models.CharField):
         super().__init__(*args, **kwargs)
 
 
+class GameSeries(models.Model):
+    """ hold a collection of games defined by some method to stop """
+    player_1 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='first_series')
+    player_2 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='second_series')
+
+    points_to_stop = models.IntegerField(default=0)
+    concurrent_games = models.IntegerField(default=1)
+    dollars_per_point = models.FloatField(default=0.0)
+
+    p1_points = models.IntegerField(default=0)
+    p2_points = models.IntegerField(default=0)
+
+    created_at = models.DateTimeField(auto_created=True)
+
+
 class Game(models.Model):
+    series = models.ForeignKey(GameSeries, on_delete=models.CASCADE, null=True)
     player_1 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='first_games')
     player_2 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='second_games')
 
