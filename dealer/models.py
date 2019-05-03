@@ -379,8 +379,8 @@ class Game(models.Model):
             'top_of_discard': self.top_of_discard,
             'deck_length': len(self.deck),
             'last_completed_turn': (
-                self.p1_last_completed_turn
-                if is_p1 else self.p2_last_completed_turn
+                self.p1_last_completed_turn if is_p1
+                else self.p2_last_completed_turn
             ),
             **common_items,
             **final_info
