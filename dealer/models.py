@@ -57,8 +57,8 @@ class Game(models.Model):
     p2_discards = models.BooleanField()
     p2_draws = models.BooleanField()
 
-    p1_last_completed_turn = models.DateTimeField(null=True)
-    p2_last_completed_turn = models.DateTimeField(null=True)
+    p1_last_completed_turn = models.DateTimeField(null=False)
+    p2_last_completed_turn = models.DateTimeField(null=False)
 
     # If player drew from discard, it is that card
     # If player drew from deck, it is None
@@ -467,6 +467,8 @@ class Game(models.Model):
             p1_discards=False,
             p2_draws=False,
             p2_discards=False,
+            p1_last_completed_turn=Game.now(),
+            p2_last_completed_turn=Game.now(),
             **dealt_game
         )
         game.save()
