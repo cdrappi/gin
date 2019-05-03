@@ -43,20 +43,20 @@ class GameSeries(models.Model):
 
     points_to_stop = models.IntegerField(default=0)
     concurrent_games = models.IntegerField(default=1)
-    dollars_per_point = models.FloatField(default=0.0)
+    cents_per_point = models.IntegerField(default=0)
 
     p1_points = models.IntegerField(default=0)
     p2_points = models.IntegerField(default=0)
 
     @staticmethod
-    def new_game_series(player_1_id, player_2_id, points_to_stop, concurrent_games, dollars_per_point):
+    def new_game_series(player_1_id, player_2_id, points_to_stop, concurrent_games, cents_per_point):
         """
 
         :param player_1_id:
         :param player_2_id:
         :param points_to_stop:
         :param concurrent_games:
-        :param dollars_per_point:
+        :param cents_per_point:
         :return:
         """
         game_series = GameSeries.objects.create(
@@ -65,7 +65,7 @@ class GameSeries(models.Model):
             created_at=Game.now(),
             points_to_stop=points_to_stop,
             concurrent_games=concurrent_games,
-            dollars_per_point=dollars_per_point,
+            cents_per_point=cents_per_point,
         )
         for _ in range(concurrent_games):
             Game.new_game(game_series)

@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_created=True)),
                 ('points_to_stop', models.IntegerField(default=0)),
                 ('concurrent_games', models.IntegerField(default=1)),
-                ('dollars_per_point', models.FloatField(default=0.0)),
+                ('cents_per_point', models.IntegerField(default=0)),
                 ('p1_points', models.IntegerField(default=0)),
                 ('p2_points', models.IntegerField(default=0)),
                 ('player_1',
@@ -57,5 +57,5 @@ class Migration(migrations.Migration):
             name='series',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='dealer.GameSeries'),
         ),
-        migrations.RunPython(code=backfill_default_game_series)
+        migrations.RunPython(code=backfill_default_game_series, reverse_code=lambda a, s: 0)
     ]

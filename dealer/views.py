@@ -60,7 +60,7 @@ def create_game_series(request):
         player_2_id=posted_data['opponent_id'],
         points_to_stop=posted_data.get('points_to_stop', 0),
         concurrent_games=posted_data.get('concurrent_games', 1),
-        dollars_per_point=posted_data.get('dollars_per_point', 0.0),
+        cents_per_point=posted_data.get('cents_per_point', 0),
     )
     return JsonResponse(data={'id': game_series.id})
 
