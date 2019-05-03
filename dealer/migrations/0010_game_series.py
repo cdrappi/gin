@@ -9,13 +9,20 @@ def backfill_default_game_series(apps, schema_editor):
     """ give all Game objects without a GameSeries the default series,
         so we have no null values in the DB
     """
-    games = (
-        apps
-            .get_model('dealer', 'Game')
-            .objects
-            .using(schema_editor.connection.alias)
-            .filter(game_series=None)
-    )
+    games = (apps
+             .get_model('dealer', 'Game')
+             .objects
+             .using(schema_editor.connection.alias)
+             .filter(game_series=None)
+             )
+
+    GameSeries = apps.get_model('dealer', 'GameSeries')
+    for game in games:
+        game.series = GameSeries.objects.create(
+            player_1=game.player_1,
+            player_2=game.player_2,
+        )
+        game.save()
 
 
 class Migration(migrations.Migration):
@@ -47,4 +54,5 @@ class Migration(migrations.Migration):
             name='series',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='dealer.GameSeries'),
         ),
+        migrations.RunPython(code=backfill_default_game_series)
     ]
