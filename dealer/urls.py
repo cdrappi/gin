@@ -9,5 +9,5 @@ urlpatterns = [
     path('games/', views.get_users_games),
     path('draw/', views.draw_card),
     path('discard/', views.discard_card),
-    path('create/', views.create_game),
+    path('create/', views.create_game_series),
 ]
