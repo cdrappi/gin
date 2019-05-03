@@ -45,6 +45,22 @@ class UserList extends Component {
       alert("Please select an opponent");
       return;
     }
+    if (this.state.isLoggedIn) {
+      fetch(`${API_HOST}/dealer/users/`, {
+        method: "POST",
+        headers: {
+          Authorization: `JWT ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          opponent_id: this.state.opponent_id,
+          points_to_stop: this.state.points_to_stop,
+          concurrent_games: this.state.concurrent_games,
+          cents_per_point: this.state.cents_per_point
+        })
+      }).then(res => {
+        window.location.reload();
+      });
+    }
   }
 
   getUsers() {
