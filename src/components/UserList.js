@@ -81,7 +81,7 @@ class UserList extends Component {
       } catch {
         // assume token is stale, make user login again
         localStorage.removeItem("token");
-        this.setState({ isLoggedIn: false });
+        // this.setState({ isLoggedIn: false });
         window.location.reload();
       }
     }
