@@ -70,3 +70,11 @@
     position: absolute;
     font-family: monospace;
 }
+
+.series {
+    top: 0px;
+    left: 0px;
+    padding: 1px 0 0 1px;
+    position: absolute;
+    font-family: monospace;
+}

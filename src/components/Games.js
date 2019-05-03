@@ -43,6 +43,7 @@ class Games extends Component {
       <Game
         key={g.id.toString()}
         id={g.id}
+        series_id={g.series_id}
         action={g.action}
         opponent_username={g.opponent_username}
         hand={g.hand}
