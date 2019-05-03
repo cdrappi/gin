@@ -1,4 +1,5 @@
 import copy
+import datetime
 import itertools
 import random
 
@@ -55,6 +56,9 @@ class Game(models.Model):
     p1_draws = models.BooleanField()
     p2_discards = models.BooleanField()
     p2_draws = models.BooleanField()
+
+    p1_last_completed_turn = models.DateTimeField(null=False)
+    p2_last_completed_turn = models.DateTimeField(null=False)
 
     # If player drew from discard, it is that card
     # If player drew from deck, it is None
@@ -125,6 +129,7 @@ class Game(models.Model):
         self.turns += 1
         self.last_draw = card_drawn
         self.last_draw_from_discard = from_discard
+
         self.save()
         CardDrawn.objects.create(
             player=user,
@@ -134,6 +139,10 @@ class Game(models.Model):
             shuffle=self.shuffles,
             from_discard=from_discard
         )
+
+    @staticmethod
+    def now():
+        return datetime.datetime.now(tz=datetime.timezone.utc)
 
     def draw_from_deck(self, user):
         self.draw_card(user, from_discard=False)
@@ -154,14 +163,17 @@ class Game(models.Model):
         :return: None
         """
         assert card in self.users_hand(user)
+
         if self.is_player_1(user):
             self.p1_hand = [c for c in self.p1_hand if c != card]
             self.p1_discards = False
             self.p2_draws = True
+            self.p1_last_completed_turn = self.now()
         elif self.is_player_2(user):
             self.p2_hand = [c for c in self.p2_hand if c != card]
             self.p2_discards = False
             self.p1_draws = True
+            self.p2_last_completed_turn = self.now()
 
         self.discard.append(card)
 
@@ -366,6 +378,10 @@ class Game(models.Model):
             'points': self.hand_points(hand),
             'top_of_discard': self.top_of_discard,
             'deck_length': len(self.deck),
+            'last_completed_turn': (
+                self.p1_last_completed_turn if is_p1
+                else self.p2_last_completed_turn
+            ),
             **common_items,
             **final_info
         }
@@ -451,6 +467,8 @@ class Game(models.Model):
             p1_discards=False,
             p2_draws=False,
             p2_discards=False,
+            p1_last_completed_turn=Game.now(),
+            p2_last_completed_turn=Game.now(),
             **dealt_game
         )
         game.save()
@@ -474,7 +492,7 @@ class Game(models.Model):
         :return:
         """
         player_in_game = Q(player_1=user) | Q(player_2=user)
-        games = Game.objects.filter(player_in_game).order_by('id')  # .filter(is_active=True)
+        games = Game.objects.filter(player_in_game).order_by('id').filter(is_active=True)
         users_games = {
             Game.PLAY: [],
             Game.WAIT: [],
@@ -487,6 +505,7 @@ class Game(models.Model):
             else:
                 users_games[game_state['action']].append(game_state)
 
+        users_games[Game.PLAY].sort(key=lambda k: k['last_completed_turn'])
         return users_games
 
 
