@@ -224,7 +224,7 @@ class Game(models.Model):
             card_drawn = self.top_of_discard
             self.add_to_hand(user, card_drawn)
             self.discard = self.discard[:-1]
-            self.public_hud[card_drawn] = "1" if is_p1 else is_p2
+            self.public_hud[card_drawn] = "1" if is_p1 else "2"
         else:
             card_drawn = self.top_of_deck
             self.add_to_hand(user, self.top_of_deck)
@@ -237,6 +237,11 @@ class Game(models.Model):
                 self.deck = new_deck
                 self.discard = []
                 self.shuffles += 1
+                self.public_hud = {
+                    card: location
+                    for card, location in self.public_hud.items()
+                    if location in {"1", "2"}
+                }
 
         if is_p1:
             self.p1_draws = False
@@ -295,7 +300,8 @@ class Game(models.Model):
             self.p2_last_completed_turn = self.now()
 
         # add discard to HUD
-        self.public_hud[self.discard[-1]] = "d"
+        if self.discard:
+            self.public_hud[self.discard[-1]] = "d"
         self.public_hud[card] = "t"
 
         self.discard.append(card)
@@ -500,6 +506,22 @@ class Game(models.Model):
             final_info['drawn_card'] = self.last_draw
 
         hand = self.sorted_hand(self.users_hand(user))
+
+        def transform_loc(loc):
+            """
+            :param loc: (str) "1" or "2" for p1/p2
+            :return: "u" or "o" for user/opponent
+            """
+            if loc == "1":
+                return "u" if is_p1 else "o"
+            elif loc == "2":
+                return "u" if is_p2 else "o"
+            else:
+                return loc
+
+        transformed_hud = {
+            card: transform_loc(loc) for card, loc in self.public_hud.items()
+        }
         return {
             'hand': hand,
             'points': self.hand_points(hand),
@@ -509,6 +531,7 @@ class Game(models.Model):
                 self.p1_last_completed_turn if is_p1
                 else self.p2_last_completed_turn
             ),
+            'hud': {**transformed_hud, **{c: "u" for c in hand}},
             **common_items,
             **final_info
         }
