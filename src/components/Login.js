@@ -26,7 +26,7 @@ class Login extends Component {
 
   componentDidMount() {
     if (this.getToken()) {
-      try {
+      if (true) {
         fetch(`${API_HOST}/dealer/current_user/`, {
           headers: {
             Authorization: `JWT ${localStorage.getItem("token")}`
@@ -39,7 +39,7 @@ class Login extends Component {
               logged_in: true
             });
           });
-      } catch {
+      } else {
         this.deleteToken();
       }
     }
@@ -83,6 +83,7 @@ class Login extends Component {
     })
       .then(res => res.json())
       .then(json => {
+        console.log(json.token);
         localStorage.setItem("token", json.token);
         this.setState({
           logged_in: true,
@@ -93,7 +94,7 @@ class Login extends Component {
   };
 
   handle_logout = () => {
-    localStorage.removeItem("token");
+    this.deleteToken();
     this.setState({ logged_in: false, username: "" });
   };
 
