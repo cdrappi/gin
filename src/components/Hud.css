@@ -1,0 +1,15 @@
+.users-hand {
+    color: yellow;
+}
+
+.opponents-hand {
+    color: darkorchid;
+}
+
+.discard {
+    color: lightgray
+}
+
+.top-of-discard {
+    color: orange
+}
