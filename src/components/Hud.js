@@ -18,15 +18,27 @@ const location_css_map = {
 };
 
 class Hud extends Component {
-  element(card) {
+  tableData(card) {
     // let rank = card[0];
     // let suit = card[1];
     let loc = this.props.hud[card];
     let locCss = location_css_map[loc];
-    return <div class={`${locCss}`} />;
+    return <td key={card} className={`${locCss}`} />;
   }
   render() {
-    return <div />;
+    let tableHeader = suits.map(s => <th key={s}>{suit_emojis[s]}</th>);
+    let tableData = [];
+    for (let rank in ranks) {
+      tableData.push(<tr>{suits.map(s => this.tableData(rank + s))}</tr>);
+    }
+
+    console.log(tableData);
+    return (
+      <table>
+        <thead>{tableHeader}</thead>
+        <tbody>{tableData}</tbody>
+      </table>
+    );
   }
 }
 

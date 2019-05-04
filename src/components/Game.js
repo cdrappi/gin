@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./Game.css";
 import Card from "./Card.js";
+import Hud from "./Hud.js";
 
 class Game extends Component {
   createCard(card, inHand, isLastDraw) {
@@ -36,6 +37,8 @@ class Game extends Component {
       last_draw = this.createCard(this.props.last_draw, false, true);
     }
 
+    let hud = <Hud className="hud" key={0} hud={this.props.hud} />;
+
     return (
       <div className={`game ${this.props.action}`}>
         <div className="game-info">
@@ -51,6 +54,7 @@ class Game extends Component {
           <div className="draw-discard-card">
             {this.createCard("?x", false)}
           </div>
+          <div>{hud}</div>
           <div className="last-drawn-card"> </div>
           <div className="hand"> {cards_r2} </div>
           <div className="draw-discard-card">{discard}</div>

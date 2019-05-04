@@ -42,6 +42,11 @@
     margin: auto;
 }
 
+.hud {
+    grid-column: 7 / span 1;
+    grid-row: 1 / span 2;
+}
+
 .draw {
     background-color: #d4f8d4;
 }

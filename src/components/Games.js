@@ -54,6 +54,7 @@ class Games extends Component {
         last_draw={g.last_draw}
         deck_length={g.deck_length}
         drawn_card={g.drawn_card}
+        hud={g.hud}
         points={g.points}
         refreshGames={this.refreshGames}
       />
