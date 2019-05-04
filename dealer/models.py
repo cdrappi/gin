@@ -171,7 +171,7 @@ class Game(models.Model):
     # "t": top of discard
     # "1": player 1's hand
     # "2": player 2's hand
-    public_hud = JSONField(default={})
+    public_hud = JSONField(default=dict)
 
     # denormalize for convenience... only edit the Game model during the game,
     # and write-only to all other models.
