@@ -26,7 +26,7 @@ class Login extends Component {
 
   componentDidMount() {
     if (this.getToken()) {
-      if (true) {
+      try {
         fetch(`${API_HOST}/dealer/current_user/`, {
           headers: {
             Authorization: `JWT ${this.getToken()}`
@@ -39,7 +39,7 @@ class Login extends Component {
               logged_in: true
             });
           });
-      } else {
+      } catch {
         this.deleteToken();
       }
     }
