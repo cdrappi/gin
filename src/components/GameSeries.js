@@ -1,17 +1,6 @@
 import React, { Component } from "react";
 import "./GameSeries.css";
 
-// key={g.id.toString()}
-// id={g.id}
-// opponent_id={g.opponent_id}
-// opponent_username={g.opponent_username}
-// points={g.points}
-// opponent_points={g.opponent_points}
-// points_to_stop={g.points_to_stop}
-// concurrent_games={g.concurrent_games}
-// cents_per_point={g.cents_per_point}
-// refreshGames={this.refreshGames}
-
 class GameSeries extends Component {
   constructor(props) {
     super(props);
