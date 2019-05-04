@@ -4,7 +4,7 @@ import itertools
 import random
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models import Q
 
@@ -148,6 +148,13 @@ class Game(models.Model):
     turns = models.IntegerField(default=0)
     shuffles = models.IntegerField(default=0)
 
+    # Map from card --> location
+    # "d": discard
+    # "t": top of discard
+    # "1": player 1's hand
+    # "2": player 2's hand
+    public_hud = JSONField(default={})
+
     # denormalize for convenience... only edit the Game model during the game,
     # and write-only to all other models.
     deck = ArrayField(base_field=CardField())
@@ -217,6 +224,7 @@ class Game(models.Model):
             card_drawn = self.top_of_discard
             self.add_to_hand(user, card_drawn)
             self.discard = self.discard[:-1]
+            self.public_hud[card_drawn] = "1" if is_p1 else is_p2
         else:
             card_drawn = self.top_of_deck
             self.add_to_hand(user, self.top_of_deck)
@@ -285,6 +293,10 @@ class Game(models.Model):
             self.p2_discards = False
             self.p1_draws = True
             self.p2_last_completed_turn = self.now()
+
+        # add discard to HUD
+        self.public_hud[self.discard[-1]] = "d"
+        self.public_hud[card] = "t"
 
         self.discard.append(card)
 
