@@ -20,17 +20,16 @@ class GameSeries extends Component {
 
   render() {
     let points_margin = this.props.opponent_points - this.props.points;
+    let dollars = (points_margin * this.props.cents_per_point) / 100;
 
     let cssClass = "";
-    if (points_margin > 0) {
+    if (dollars > 0) {
       cssClass = "final-score-win";
-    } else if (points_margin < 0) {
+    } else if (dollars < 0) {
       cssClass = "final-score-loss";
     }
 
     let pointsText = this.props.points + "-" + this.props.opponent_points;
-
-    let dollars = (points_margin * this.props.cents_per_point) / 100;
 
     return (
       <div className="game-series">
