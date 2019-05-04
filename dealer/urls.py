@@ -1,4 +1,3 @@
-# todos/urls.py
 from django.urls import path
 
 from dealer import views
