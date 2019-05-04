@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "./Games.css";
 import Game from "./Game";
-import CompleteGame from "./CompleteGame";
 import API_HOST from "./api-config";
 
 const ONE_SECOND = 1000;
@@ -47,6 +46,7 @@ class Games extends Component {
       <Game
         key={g.id.toString()}
         id={g.id}
+        series_id={g.series_id}
         action={g.action}
         opponent_username={g.opponent_username}
         hand={g.hand}
@@ -60,22 +60,9 @@ class Games extends Component {
     );
   }
 
-  completeGame(g) {
-    return (
-      <CompleteGame
-        key={g.id.toString()}
-        id={g.id}
-        opponent_username={g.opponent_username}
-        points={g.points}
-        opponent_points={g.opponent_points}
-      />
-    );
-  }
-
   render() {
     let play_games = this.state.play.map(g => this.newGame(g));
     let wait_games = this.state.wait.map(g => this.newGame(g));
-    let complete_games = this.state.complete.map(g => this.completeGame(g));
     return (
       <div>
         <h2>ALL GAMES</h2>
@@ -94,10 +81,6 @@ class Games extends Component {
           <div>
             <h3>OPPONENT ACTS</h3>
             {wait_games}
-          </div>
-          <div>
-            <h3>COMPLETED GAMES</h3>
-            {complete_games}
           </div>
         </div>
       </div>

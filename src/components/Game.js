@@ -39,6 +39,9 @@ class Game extends Component {
     return (
       <div className={`game ${this.props.action}`}>
         <div className="game-info">
+          <span className="series">
+            {this.props.series_id}:{this.props.id}
+          </span>
           <span className="opponent">{this.props.opponent_username}</span> (
           {this.props.deck_length}
           {"/52"})<span className="points">{this.props.points} pts</span>{" "}

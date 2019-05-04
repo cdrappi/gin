@@ -15,19 +15,6 @@
     font-weight: bold;
 }
 
-.final-score {
-    font-weight: bold;
-    font-size: 150%;
-}
-
-.final-score-win {
-    color: green;
-}
-
-.final-score-loss {
-    color: red;
-}
-
 .game-cards {
     display: grid;
     grid-gap: 10px 1px;
@@ -67,6 +54,14 @@
     top: 0px;
     right: 0px;
     padding: 1px 5px 0 0;
+    position: absolute;
+    font-family: monospace;
+}
+
+.series {
+    top: 0px;
+    left: 0px;
+    padding: 1px 0 0 1px;
     position: absolute;
     font-family: monospace;
 }

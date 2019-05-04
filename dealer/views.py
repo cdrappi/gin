@@ -1,14 +1,14 @@
 import json
 
 from django.contrib.auth.models import User
-from django.http.response import JsonResponse, HttpResponseBadRequest
+from django.http.response import HttpResponseBadRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dealer.models import Game
+from dealer.models import Game, GameSeries
 from dealer.serializers import UserSerializer, UserSerializerWithToken
 
 
@@ -46,7 +46,7 @@ class UserList(APIView):
 
 
 @csrf_exempt
-def create_game(request):
+def create_game_series(request):
     """
 
     :param request:
@@ -54,8 +54,14 @@ def create_game(request):
     """
     posted_data = json.loads(request.body)
     user = request.user
-    game = Game.new_game(user.id, posted_data['opponent_id'])
-    return JsonResponse(data=game.get_state(user))
+    game_series = GameSeries.new_game_series(
+        player_1_id=user.id,
+        player_2_id=posted_data['opponent_id'],
+        points_to_stop=posted_data.get('points_to_stop', 0),
+        concurrent_games=posted_data.get('concurrent_games', 1),
+        cents_per_point=posted_data.get('cents_per_point', 0),
+    )
+    return JsonResponse(data={'id': game_series.id})
 
 
 def get_users_games(request):
@@ -74,6 +80,21 @@ def get_users_games(request):
             Game.WAIT: [],
             Game.COMPLETE: [],
         })
+
+
+def get_users_game_series(request):
+    """
+
+    :param request:
+    :return:
+    """
+    try:
+        users_series = GameSeries.get_game_series(request.user)
+        return JsonResponse(data=users_series)
+    except:
+        return JsonResponse(
+            data={GameSeries.COMPLETE: [], GameSeries.INCOMPLETE: []}
+        )
 
 
 @csrf_exempt  # TODO: add CSRF token to React fetch headers

@@ -1,0 +1,16 @@
+.game-series {
+    text-align: center
+}
+
+.final-score {
+    font-weight: bold;
+    font-size: 150%;
+}
+
+.final-score-win {
+    color: green;
+}
+
+.final-score-loss {
+    color: red;
+}
