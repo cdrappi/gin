@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "./Games.css";
 import Game from "./Game";
-import GameSeries from "./GameSeries";
 import API_HOST from "./api-config";
 
 const ONE_SECOND = 1000;
