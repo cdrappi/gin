@@ -38,8 +38,10 @@ class GameSeries extends Component {
             </span>
             <div>
               {this.props.concurrent_games} MG | {this.props.points_to_stop} PS
-              | {this.props.complete_games}/{this.props.incomplete_games} games
-              | ${this.props.cents_per_point / 100}/pt
+            </div>
+            <div>
+              {this.props.complete_games}/{this.props.incomplete_games} games |
+              ${this.props.cents_per_point / 100}/pt
             </div>
           </div>
         </div>
