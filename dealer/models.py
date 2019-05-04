@@ -135,6 +135,19 @@ class GameSeries(models.Model):
 
         self.save()
 
+    def refresh_score(self):
+        """ recompute score for all games in series """
+
+        self.p1_points = 0
+        self.p2_points = 0
+
+        games = self.game_set.filter(is_complete=True)
+        for p1_pts, p2_pts in games.values_list('p1_points', 'p2_points'):
+            self.p1_points += p1_pts
+            self.p2_points += p2_pts
+
+        self.save()
+
 
 class Game(models.Model):
     series = models.ForeignKey(GameSeries, on_delete=models.CASCADE, null=True)
