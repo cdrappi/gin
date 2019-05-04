@@ -17,27 +17,12 @@ class CreateGameSeries extends Component {
     // This binding is necessary to make `this` work in the callback
     this.getUsers();
 
-    this.handleOpponentChange = this.handleOpponentChange.bind(this);
-    this.handlePointsChange = this.handlePointsChange.bind(this);
-    this.handleGamesChange = this.handleGamesChange.bind(this);
-    this.handleCentsChange = this.handleCentsChange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleOpponentChange(event) {
-    this.setState({ opponent_id: event.target.value });
-  }
-
-  handlePointsChange(event) {
-    this.setState({ points_to_stop: event.target.value });
-  }
-
-  handleGamesChange(event) {
-    this.setState({ concurrent_games: event.target.value });
-  }
-
-  handleCentsChange(event) {
-    this.setState({ cents_per_point: event.target.value });
+  handleChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
   }
 
   handleSubmit() {
@@ -46,20 +31,21 @@ class CreateGameSeries extends Component {
       return;
     }
     if (this.state.isLoggedIn) {
+      let json_body = JSON.stringify({
+        opponent_id: parseInt(this.state.opponent_id),
+        points_to_stop: parseInt(this.state.points_to_stop),
+        concurrent_games: parseInt(this.state.concurrent_games),
+        cents_per_point: parseInt(this.state.cents_per_point)
+      });
+
       fetch(`${API_HOST}/dealer/create/`, {
         method: "POST",
         headers: {
           Authorization: `JWT ${localStorage.getItem("token")}`
         },
-        body: JSON.stringify({
-          opponent_id: this.state.opponent_id,
-          points_to_stop: this.state.points_to_stop,
-          concurrent_games: this.state.concurrent_games,
-          cents_per_point: this.state.cents_per_point
-        })
+        body: json_body
       }).then(res => {
-        alert(JSON.stringify(res.json()));
-        // window.location.reload();
+        window.location.reload();
       });
     }
   }
@@ -83,17 +69,16 @@ class CreateGameSeries extends Component {
         // assume token is stale, make user login again
         localStorage.removeItem("token");
         // this.setState({ isLoggedIn: false });
-        window.location.reload();
+        // window.location.reload();
       }
     }
   }
   render() {
     let options = [];
-
     if (this.state.opponent_id === -1) {
       options = [
         <option key={-1} value={-1}>
-          SELECT
+          SELECT OPPONENT
         </option>
       ];
     }
@@ -105,60 +90,54 @@ class CreateGameSeries extends Component {
       ));
       options = options.concat(actual_options);
     } catch {
+      // TODO: clean up auth, this hack sucks
       localStorage.removeItem("token");
       window.location.reload();
     }
-
     return (
       <div>
         <h2>Create a new game</h2>
-        <form onSubmit={this.handleSubmit}>
-          <div>
-            <label>
-              Username:
-              <select
-                value={this.state.opponent_id}
-                onChange={this.handleOpponentChange}
-              >
-                {options}
-              </select>
-            </label>
+        <div>
+          <select
+            id="opponent_id"
+            name="opponent_id"
+            value={this.state.opponent_id}
+            onChange={this.handleChange}
+          >
+            {options}
+          </select>
+          <div className="input-item">
+            <span>Points</span>
+            <input
+              type="text"
+              id="points_to_stop"
+              name="points_to_stop"
+              onChange={this.handleChange}
+              value={this.state.points_to_stop}
+            />
           </div>
-          <div>
-            <label>
-              Points to stop
-              <input
-                type="text"
-                pattern="[0-9]*"
-                onChange={this.handlePointsChange}
-                value={this.state.points_to_stop}
-              />
-            </label>
+          <div className="input-item">
+            <span>Games</span>
+            <input
+              type="text"
+              id="concurrent_games"
+              name="concurrent_games"
+              onChange={this.handleChange}
+              value={this.state.concurrent_games}
+            />
           </div>
-          <div>
-            <label>
-              Concurrent games
-              <input
-                type="text"
-                pattern="[0-9]*"
-                onChange={this.handleGamesChange}
-                value={this.state.concurrent_games}
-              />
-            </label>
+          <div className="input-item">
+            <span>Cents/point</span>
+            <input
+              type="text"
+              id="cents_per_point"
+              name="cents_per_point"
+              onChange={this.handleChange}
+              value={this.state.cents_per_point}
+            />
           </div>
-          <div>
-            <label>
-              Cents per point
-              <input
-                type="text"
-                pattern="[0-9]*"
-                onChange={this.handleCentsChange}
-                value={this.state.cents_per_point}
-              />
-            </label>
-          </div>
-          <input type="submit" value="Create" />
-        </form>
+        </div>
+        <button onClick={this.handleSubmit}>CREATE</button>
       </div>
     );
   }

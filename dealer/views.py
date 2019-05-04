@@ -82,6 +82,21 @@ def get_users_games(request):
         })
 
 
+def get_users_game_series(request):
+    """
+
+    :param request:
+    :return:
+    """
+    try:
+        users_series = GameSeries.get_game_series(request.user)
+        return JsonResponse(data=users_series)
+    except:
+        return JsonResponse(
+            data={GameSeries.COMPLETE: [], GameSeries.INCOMPLETE: []}
+        )
+
+
 @csrf_exempt  # TODO: add CSRF token to React fetch headers
 def draw_card(request):
     """
