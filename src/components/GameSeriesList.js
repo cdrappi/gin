@@ -38,7 +38,8 @@ class GameSeriesList extends Component {
         opponent_username={g.opponent_username}
         points={g.points}
         opponent_points={g.opponent_points}
-        num_games={g.num_games}
+        complete_games={g.complete_games}
+        incomplete_games={g.incomplete_games}
         points_to_stop={g.points_to_stop}
         concurrent_games={g.concurrent_games}
         cents_per_point={g.cents_per_point}
