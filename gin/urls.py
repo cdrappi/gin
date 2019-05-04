@@ -26,5 +26,7 @@ urlpatterns = [
     path('token_auth/', obtain_jwt_token),
     path('admin/', admin.site.urls),
     path('dealer/', include('dealer.urls')),
+    path('play/', single_page_app),
+    path('/', single_page_app),
     path('', single_page_app),
 ]
