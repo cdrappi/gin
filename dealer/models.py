@@ -8,13 +8,13 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models import Q
 
-ranks = list('23456789TJQKA')
-suits = set('cdhs')
+card_ranks = list('23456789TJQKA')
+card_suits = set('cdhs')
 
-CARD_CHOICES = [(f'{rank}{suit}', f'{rank} of {suit}')
-                for rank in ranks for suit in suits]
+card_choices = [(f'{rank}{suit}', f'{rank} of {suit}')
+                for rank in card_ranks for suit in card_suits]
 
-CARD_VALUES = {
+card_values = {
     'A': 1,
     'T': 10,
     'J': 11,
@@ -28,7 +28,7 @@ class CardField(models.CharField):
     """ e.g. 'Ah', 'Kc', '4s', etc. """
 
     def __init__(self, *args, **kwargs):
-        kwargs = {**kwargs, 'max_length': 2, 'choices': CARD_CHOICES}
+        kwargs = {**kwargs, 'max_length': 2, 'choices': card_choices}
         super().__init__(*args, **kwargs)
 
 
@@ -394,7 +394,7 @@ class Game(models.Model):
 
     @staticmethod
     def sort_cards(cards):
-        return sorted(cards, key=lambda c: CARD_VALUES[c[0]])
+        return sorted(cards, key=lambda c: card_values[c[0]])
 
     def sorted_hand(self, hand):
         """
@@ -441,7 +441,7 @@ class Game(models.Model):
         # so we just need to check if they make a valid 3- or 4-straight
 
         # handle fact that aces can be 1 or 14
-        values_ace_as_1 = sorted(CARD_VALUES[r] for r in card_ranks)
+        values_ace_as_1 = sorted(card_values[r] for r in card_ranks)
         rank_combos = [values_ace_as_1]
         if any(r == 'A' for r in card_ranks):
             rank_combos.append(sorted(14 if value == 1 else value for value in values_ace_as_1))
@@ -454,7 +454,7 @@ class Game(models.Model):
 
     @staticmethod
     def calculate_points(card_ranks):
-        return sum(CARD_VALUES[r] for r in card_ranks)
+        return sum(card_values[r] for r in card_ranks)
 
     @staticmethod
     def ranks_make_a_straight(rank_combo):
@@ -601,7 +601,7 @@ class Game(models.Model):
 
     @staticmethod
     def random_deck():
-        deck = [card for card, _ in CARD_CHOICES]
+        deck = [card for card, _ in card_choices]
         random.shuffle(deck)
         return deck
 
