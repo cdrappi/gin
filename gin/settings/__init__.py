@@ -133,7 +133,7 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ALLOW_CREDENTIALS = False
-CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
+# CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'gin.utils.my_jwt_response_handler',
