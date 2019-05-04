@@ -23,9 +23,8 @@ from rest_framework_jwt.views import obtain_jwt_token
 single_page_app = TemplateView.as_view(template_name='index.html')
 
 urlpatterns = [
-    path('token-auth/', obtain_jwt_token),
+    path('token_auth/', obtain_jwt_token),
     path('admin/', admin.site.urls),
     path('dealer/', include('dealer.urls')),
-    path('play/', single_page_app),
     path('', single_page_app),
 ]
