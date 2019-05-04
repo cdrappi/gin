@@ -237,10 +237,11 @@ class Game(models.Model):
                 self.deck = new_deck
                 self.discard = []
                 self.shuffles += 1
+                # Theoretically, both players know each others hands at this point,
+                # so we can just do this:
                 self.public_hud = {
-                    card: location
-                    for card, location in self.public_hud.items()
-                    if location in {"1", "2"}
+                    **{c: "1" for c in self.p1_hand},
+                    **{c: "2" for c in self.p2_hand}
                 }
 
         if is_p1:
