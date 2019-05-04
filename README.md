@@ -24,7 +24,11 @@ More concretely, here is how you'd score each of the main types of losing hands:
 - **One 4-meld**: Sum up the points for the 3 non-melded cards
 - **Two 3-melds, one stray card**: Sum up the stray card plus whichever meld has less points. Example: suppose your hand is *(6s-7s-8s) (3c-3d-3h) (Ah)*. Since the run of spades is more points than trip threes, you'd count the run of spades as your meld, and count the threes towards your hand. The total would be 1+3+3+3=10 points
 
-Generally you'd play a group of games until someone gets 50 or 100 points. This app does not support that functionality yet
+Generally you'd play a group of games until someone reaches some amount of points. The app supports playing a series of games, with two parameters:
+- *point stop*: keep creating new games until one player reaches this many points
+- *concurrent games*: play this many games at a time
+
+The game is best played for money. If you and your opponent have degenerate tendencies and would like us to do bookkeeping for you, you are welcome to set the *cents per point* parameter
 
 # Basic strategy
 If you are consistently losing games with >20 points in your hand, then you are playing too aggressively to win. It's okay to shoot for one high-point meld early on if that's what the cards dictate, but as the game goes on you have to dump all of your big cards
