@@ -27,7 +27,11 @@ SECRET_KEY = 'crg)ko!x+4f7j@610ve5c+cye_#yh!_e48fc@mhl!i)&m29k!='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['heyhowsgame.herokuapp.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    'heyhowsgame.herokuapp.com',
+    '127.0.0.1', 'localhost',
+    '127.0.0.1:8000', 'localhost:8000'
+]
 
 # Application definition
 
@@ -41,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'dealer',
-    # 'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -133,7 +136,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = ('localhost',)
+# CORS_ALLOW_CREDENTIALS = False
+CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'gin.utils.my_jwt_response_handler',

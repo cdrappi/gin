@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Login from "./components/Login";
-// import Games from "./components/Games";
-// import UserList from "./components/UserList";
+import Games from "./components/Games";
+import UserList from "./components/UserList";
 import "./App.css";
 
 class App extends Component {
@@ -9,8 +9,8 @@ class App extends Component {
     return (
       <div>
         <Login />
-        {/* <Games /> */}
-        {/* <UserList /> */}
+        <Games />
+        <UserList />
       </div>
     );
   }

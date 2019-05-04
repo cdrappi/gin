@@ -29,7 +29,7 @@ class Login extends Component {
       if (true) {
         fetch(`${API_HOST}/dealer/current_user/`, {
           headers: {
-            Authorization: `JWT ${localStorage.getItem("token")}`
+            Authorization: `JWT ${this.getToken()}`
           }
         })
           .then(res => res.json())
@@ -47,7 +47,7 @@ class Login extends Component {
 
   handle_login = (e, data) => {
     e.preventDefault();
-    fetch(`${API_HOST}/token-auth/`, {
+    fetch(`${API_HOST}/token_auth/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -83,7 +83,6 @@ class Login extends Component {
     })
       .then(res => res.json())
       .then(json => {
-        console.log(json.token);
         localStorage.setItem("token", json.token);
         this.setState({
           logged_in: true,
