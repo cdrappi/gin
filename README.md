@@ -9,6 +9,7 @@ A meld is a group of cards that are either all the same rank or a straight flush
 The first person who makes both a 3-meld and a 4-meld gets 0 points. The other person's hand is scored according to the un-melded cards left in their hand. However, if you have two 3-melds in your hand, only one of them is exempt from accruing points
 
 The scoring system:
+
 | Rank  | Points          |
 |-------|-----------------|
 | Ace   | 1               |
