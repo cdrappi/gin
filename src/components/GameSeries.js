@@ -20,10 +20,16 @@ class GameSeries extends Component {
 
   render() {
     let points_margin = this.props.opponent_points - this.props.points;
-    let cssClass = points_margin > 0 ? "final-score-win" : "final-score-loss";
-    let pointsText = this.props.points + "-" + this.props.opponent_points;
-
     let dollars = (points_margin * this.props.cents_per_point) / 100;
+
+    let cssClass = "";
+    if (dollars > 0) {
+      cssClass = "final-score-win";
+    } else if (dollars < 0) {
+      cssClass = "final-score-loss";
+    }
+
+    let pointsText = this.props.points + "-" + this.props.opponent_points;
 
     return (
       <div className="game-series">
@@ -37,8 +43,11 @@ class GameSeries extends Component {
               {this.formatDollars(dollars)}
             </span>
             <div>
-              {this.props.concurrent_games} games | {this.props.points_to_stop}{" "}
-              pts | ${this.props.cents_per_point / 100}/pt
+              {this.props.concurrent_games} MG | {this.props.points_to_stop} PS
+            </div>
+            <div>
+              {this.props.complete_games}/{this.props.incomplete_games} games |
+              ${this.props.cents_per_point / 100}/pt
             </div>
           </div>
         </div>

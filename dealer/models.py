@@ -69,6 +69,8 @@ class GameSeries(models.Model):
             'points': self.p1_points if is_p1 else self.p2_points,
             'opponent_points': self.p2_points if is_p1 else self.p1_points,
             'points_to_stop': self.points_to_stop,
+            'complete_games': self.game_set.filter(is_complete=True).count(),
+            'incomplete_games': self.game_set.filter(is_complete=False).count(),
             'concurrent_games': self.concurrent_games,
             'cents_per_point': self.cents_per_point,
             'is_complete': self.is_complete,
@@ -127,11 +129,27 @@ class GameSeries(models.Model):
         self.p1_points += game.p1_points
         self.p2_points += game.p2_points
 
-        if self.p1_points < self.points_to_stop and self.p2_points < self.points_to_stop:
-            Game.new_game(game_series=self)
+        incomplete_games = self.game_set.filter(is_complete=False).count()
 
-        if self.game_set.filter(is_complete=False).count() == 0:
+        if self.p1_points < self.points_to_stop and self.p2_points < self.points_to_stop:
+            if incomplete_games < self.concurrent_games:
+                Game.new_game(game_series=self)
+
+        if incomplete_games == 0:
             self.is_complete = True
+
+        self.save()
+
+    def refresh_score(self):
+        """ recompute score for all games in series """
+
+        self.p1_points = 0
+        self.p2_points = 0
+
+        games = self.game_set.filter(is_complete=True)
+        for p1_pts, p2_pts in games.values_list('p1_points', 'p2_points'):
+            self.p1_points += p1_pts
+            self.p2_points += p2_pts
 
         self.save()
 
