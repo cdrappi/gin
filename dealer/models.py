@@ -69,6 +69,8 @@ class GameSeries(models.Model):
             'points': self.p1_points if is_p1 else self.p2_points,
             'opponent_points': self.p2_points if is_p1 else self.p1_points,
             'points_to_stop': self.points_to_stop,
+            'complete_games': self.game_set.filter(is_complete=True).count(),
+            'incomplete_games': self.game_set.filter(is_complete=False).count(),
             'concurrent_games': self.concurrent_games,
             'cents_per_point': self.cents_per_point,
             'is_complete': self.is_complete,
