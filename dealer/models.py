@@ -241,6 +241,7 @@ class Game(models.Model):
 
         self.turns = game_state.turns
         self.shuffles = game_state.shuffles
+        self.is_complete = game_state.is_complete
 
         self.p1_points = game_state.p1_points
         self.p2_points = game_state.p2_points
