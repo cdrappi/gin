@@ -76,7 +76,7 @@ def get_users_games(request):
     except:
         # TODO: make more specific
         return JsonResponse(data={
-            Game.PLAY: [],
+            Game.action_play: [],
             Game.action_wait: [],
             Game.action_complete: [],
         })
