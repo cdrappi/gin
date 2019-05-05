@@ -513,7 +513,7 @@ class Game(models.Model):
         :param game_series: (GameSeries)
         :return:
         """
-        dealt_game = ricky.deal_new_game(cards=7)
+        dealt_game = ricky.deal_new_game()
         p1_goes_first = random.choice([True, False])
         game = Game(
             series=game_series,
