@@ -6,9 +6,9 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
-from gin_utils import deck, ricky
-
-from dealer.utils.gin_ricky_game_state import GinRickyGameState
+from gin_utils import deck
+from gin_utils.ricky.utils import deal_new_game
+from gin_utils.ricky.game_state import GinRickyGameState
 
 
 class CardField(models.CharField):
@@ -418,7 +418,7 @@ class Game(models.Model):
         :param game_series: (GameSeries)
         :return:
         """
-        dealt_game = ricky.deal_new_game()
+        dealt_game = deal_new_game()
         p1_goes_first = random.choice([True, False])
         game = Game(
             series=game_series,
