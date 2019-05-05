@@ -10,7 +10,6 @@ from django.db.models import Q
 from gin_utils import deck, ricky
 
 
-
 class CardField(models.CharField):
     """ e.g. 'Ah', 'Kc', '4s', etc. """
 
@@ -350,7 +349,6 @@ class Game(models.Model):
         users_hand = self.users_hand(user)
         return ricky.hand_points(users_hand)
 
-
     def get_action(self, user):
         """
 
@@ -407,7 +405,7 @@ class Game(models.Model):
         if final_info['action'] == "discard":
             final_info['drawn_card'] = self.last_draw
 
-        hand = self.sorted_hand(self.users_hand(user))
+        hand = ricky.sorted_hand(self.users_hand(user))
 
         def transform_loc(loc):
             """
