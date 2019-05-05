@@ -167,10 +167,6 @@ class Game(models.Model):
     shuffles = models.IntegerField(default=0)
 
     # Map from card --> location
-    # "d": discard
-    # "t": top of discard
-    # "1": player 1's hand
-    # "2": player 2's hand
     public_hud = JSONField(default=dict)
 
     # denormalize for convenience... only edit the Game model during the game,
@@ -198,6 +194,13 @@ class Game(models.Model):
     DISCARD = 'discard'
     WAIT = 'wait'
     COMPLETE = 'complete'
+
+    HUD_PLAYER_1 = "1"
+    HUD_PLAYER_2 = "2"
+    HUD_TOP_OF_DECK = "t"
+    HUD_DISCARD = "d"
+    HUD_USER = "u"
+    HUD_OPPONENT = "o"
 
     DECK_DUMMY_CARD = "?y"
 
@@ -242,7 +245,10 @@ class Game(models.Model):
             card_drawn = self.top_of_discard
             self.add_to_hand(user, card_drawn)
             self.discard = self.discard[:-1]
-            self.public_hud[card_drawn] = "1" if is_p1 else "2"
+            self.public_hud[card_drawn] = (
+                Game.HUD_PLAYER_1 if is_p1
+                else Game.HUD_PLAYER_2
+            )
         else:
             card_drawn = self.top_of_deck
             self.add_to_hand(user, self.top_of_deck)
@@ -255,11 +261,11 @@ class Game(models.Model):
                 self.deck = new_deck
                 self.discard = []
                 self.shuffles += 1
-                # Theoretically, both players know each others hands at this point,
-                # so we can just do this:
+                # Both players know each others hands
+                # at this point, so we can just do this:
                 self.public_hud = {
-                    **{c: "1" for c in self.p1_hand},
-                    **{c: "2" for c in self.p2_hand}
+                    **{c: Game.HUD_PLAYER_1 for c in self.p1_hand},
+                    **{c: Game.HUD_PLAYER_2 for c in self.p2_hand}
                 }
 
         if is_p1:
@@ -320,8 +326,8 @@ class Game(models.Model):
 
         # add discard to HUD
         if self.discard:
-            self.public_hud[self.discard[-1]] = "d"
-        self.public_hud[card] = "t"
+            self.public_hud[self.discard[-1]] = Game.HUD_DISCARD
+        self.public_hud[card] = Game.HUD_TOP_OF_DECK
 
         self.discard.append(card)
 
@@ -528,13 +534,13 @@ class Game(models.Model):
 
         def transform_loc(loc):
             """
-            :param loc: (str) "1" or "2" for p1/p2
-            :return: "u" or "o" for user/opponent
+            :param loc: (str) one of {"1", "2", "t", "d"}
+            :return: (str) one of {"u", "o", "d", "t"}
             """
-            if loc == "1":
-                return "u" if is_p1 else "o"
-            elif loc == "2":
-                return "u" if is_p2 else "o"
+            if loc == Game.HUD_PLAYER_1:
+                return Game.HUD_USER if is_p1 else Game.HUD_OPPONENT
+            elif loc == Game.HUD_PLAYER_2:
+                return Game.HUD_USER if is_p2 else Game.HUD_OPPONENT
             else:
                 return loc
 
@@ -550,7 +556,7 @@ class Game(models.Model):
                 self.p1_last_completed_turn if is_p1
                 else self.p2_last_completed_turn
             ),
-            'hud': {**transformed_hud, **{c: "u" for c in hand}},
+            'hud': {**transformed_hud, **{c: Game.HUD_USER for c in hand}},
             **common_items,
             **final_info
         }
@@ -637,7 +643,7 @@ class Game(models.Model):
             p2_discards=False,
             p1_last_completed_turn=Game.now(),
             p2_last_completed_turn=Game.now(),
-            hud={dealt_game['discard'][0]: "t"},
+            public_hud={dealt_game['discard'][0]: Game.HUD_TOP_OF_DECK},
             **dealt_game
         )
         game.save()
