@@ -10,6 +10,7 @@ from django.db.models import Q
 from gin_utils import deck, ricky
 
 
+
 class CardField(models.CharField):
     """ e.g. 'Ah', 'Kc', '4s', etc. """
 
@@ -349,31 +350,6 @@ class Game(models.Model):
         users_hand = self.users_hand(user)
         return ricky.hand_points(users_hand)
 
-    @staticmethod
-    def sort_cards(cards):
-        return sorted(cards, key=lambda c: deck.card_values[c[0]])
-
-    def sorted_hand(self, hand):
-        """
-        :param hand: ([str])
-        :return: ([str])
-        """
-        combo_3, combo_4, *maybe_last_card = min(ricky.yield_hand_combos(hand),
-                                                 key=lambda k: ricky.combos_points(k[0], k[1]))
-        sorted_combo_3 = self.sort_cards(combo_3)
-        sorted_combo_4 = self.sort_cards(combo_4)
-        sorted_hand = sorted_combo_3 + sorted_combo_4 + maybe_last_card
-        rank_points = ricky.sum_card_ranks([c[0] for c in sorted_hand])
-        combo_points = ricky.combos_points(combo_3, combo_4)
-        if maybe_last_card:
-            combo_points += self.calculate_points(maybe_last_card[0][0])
-
-        if rank_points == combo_points:
-            return self.sort_cards(sorted_hand)
-        elif ricky.combo_points(combo_4) < ricky.combo_points(combo_3):
-            return sorted_combo_4 + sorted_combo_3 + maybe_last_card
-        else:
-            return sorted_combo_3 + sorted_combo_4 + maybe_last_card
 
     def get_action(self, user):
         """
