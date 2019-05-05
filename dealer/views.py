@@ -73,12 +73,12 @@ def get_users_games(request):
     try:
         users_games = Game.list_users_games(request.user)
         return JsonResponse(data=users_games)
-    # TODO: make more specific
     except:
+        # TODO: make more specific
         return JsonResponse(data={
-            Game.PLAY: [],
-            Game.WAIT: [],
-            Game.COMPLETE: [],
+            Game.action_play: [],
+            Game.action_wait: [],
+            Game.action_complete: [],
         })
 
 
@@ -92,6 +92,7 @@ def get_users_game_series(request):
         users_series = GameSeries.get_game_series(request.user)
         return JsonResponse(data=users_series)
     except:
+        # TODO: make more specific
         return JsonResponse(
             data={GameSeries.COMPLETE: [], GameSeries.INCOMPLETE: []}
         )
@@ -108,8 +109,8 @@ def draw_card(request):
     posted_data = json.loads(request.body)
     game = Game.objects.get(id=posted_data['game_id'])
     action = game.get_action(user)
-    if action != Game.DRAW:
-        return HttpResponseBadRequest(f"Can't {Game.DRAW}. Please {action}")
+    if action != Game.action_draw:
+        return HttpResponseBadRequest(f"Can't {Game.action_draw}. Please {action}")
 
     if posted_data['from_discard']:
         game.draw_from_discard(user)
@@ -131,8 +132,8 @@ def discard_card(request):
     game = Game.objects.get(id=posted_data['game_id'])
     action = game.get_action(user)
 
-    if action != Game.DISCARD:
-        return HttpResponseBadRequest(f"Can't {Game.DISCARD}. Please {action}")
+    if action != Game.action_discard:
+        return HttpResponseBadRequest(f"Can't {Game.action_discard}. Please {action}")
 
     card = posted_data['card']
     if card not in game.users_hand(user):
