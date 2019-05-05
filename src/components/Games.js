@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./Games.css";
+import "./Common.css";
 import Game from "./Game";
 import API_HOST from "./api-config";
 
@@ -66,11 +67,12 @@ class Games extends Component {
     let wait_games = this.state.wait.map(g => this.newGame(g));
     return (
       <div>
-        <h2>ALL GAMES</h2>
-        {"  "}
-        <button onClick={this.refreshGames} className="reload">
-          &#x21bb;
-        </button>
+        <h2>
+          ALL GAMES{" "}
+          <button onClick={this.refreshGames} className="reload">
+            &#x21bb;
+          </button>
+        </h2>
         <div>
           <div>
             <h3>

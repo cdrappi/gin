@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import GameSeries from "./GameSeries";
 import API_HOST from "./api-config";
 import "./GameSeriesList.css";
+import "./Common.css";
 
 class GameSeriesList extends Component {
   constructor(props) {
@@ -55,11 +56,14 @@ class GameSeriesList extends Component {
     );
     return (
       <div className="game-series-list">
-        <h2>SERIES</h2>
+        <h2>
+          SERIES{" "}
+          <button onClick={this.refreshGameSeries} className="reload">
+            &#x21bb;
+          </button>
+        </h2>
         {"  "}
-        <button onClick={this.refreshGameSeries} className="reload">
-          &#x21bb;
-        </button>
+
         <div>
           <div>
             <h3>Active</h3>
