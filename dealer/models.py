@@ -637,6 +637,7 @@ class Game(models.Model):
             p2_discards=False,
             p1_last_completed_turn=Game.now(),
             p2_last_completed_turn=Game.now(),
+            hud={dealt_game['discard'][0]: "t"},
             **dealt_game
         )
         game.save()
