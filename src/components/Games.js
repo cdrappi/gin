@@ -4,7 +4,6 @@ import Game from "./Game";
 import API_HOST from "./api-config";
 
 const ONE_SECOND = 1000;
-
 class Games extends Component {
   constructor(props) {
     super(props);
@@ -21,7 +20,7 @@ class Games extends Component {
     if (window.location.hostname === "localhost") {
       return;
     }
-    setInterval(() => this.refreshGames(), ONE_SECOND);
+    setInterval(() => this.refreshGames(), 5 * ONE_SECOND);
   }
 
   refreshGames() {
