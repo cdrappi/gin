@@ -3,6 +3,7 @@ import GameSeries from "./GameSeries";
 import API_HOST from "./api-config";
 import "./GameSeriesList.css";
 
+const ONE_MINUTE = 60 * 1000;
 class GameSeriesList extends Component {
   constructor(props) {
     super(props);
@@ -12,6 +13,13 @@ class GameSeriesList extends Component {
     };
     this.refreshGameSeries = this.refreshGameSeries.bind(this);
     this.refreshGameSeries();
+  }
+
+  componentDidMount() {
+    if (window.location.hostname === "localhost") {
+      return;
+    }
+    setInterval(() => this.refreshGames(), ONE_MINUTE);
   }
 
   refreshGameSeries() {

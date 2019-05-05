@@ -18,11 +18,10 @@ class Games extends Component {
   }
 
   componentDidMount() {
-    let refreshTime = 1 * ONE_SECOND;
     if (window.location.hostname === "localhost") {
       return;
     }
-    setInterval(() => this.refreshGames(), refreshTime);
+    setInterval(() => this.refreshGames(), ONE_SECOND);
   }
 
   refreshGames() {
