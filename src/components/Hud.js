@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./Hud.css";
 
-const ranks = "A23456789TJQK".split("");
+const ranks = "A23456789TJQKA".split("");
 const suits = "cdhs".split("");
 const suit_emojis = {
   c: "♣️",

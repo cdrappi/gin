@@ -2,6 +2,7 @@ import copy
 import datetime
 import itertools
 import random
+from django.utils.timezone import now
 
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
@@ -84,7 +85,7 @@ class GameSeries(models.Model):
         :return: ({str: [dict]})
         """
         player_in_series = Q(player_1=user) | Q(player_2=user)
-        recent_or_active = Q(created_at__gt=Game.now() - datetime.timedelta(days=7)) | Q(is_complete=False)
+        recent_or_active = Q(created_at__gt=now() - datetime.timedelta(days=7)) | Q(is_complete=False)
         series = (GameSeries
                   .objects
                   .filter(player_in_series)
@@ -111,7 +112,7 @@ class GameSeries(models.Model):
         game_series = GameSeries.objects.create(
             player_1_id=player_1_id,
             player_2_id=player_2_id,
-            created_at=Game.now(),
+            created_at=now(),
             points_to_stop=points_to_stop,
             concurrent_games=concurrent_games,
             cents_per_point=cents_per_point,
@@ -641,8 +642,8 @@ class Game(models.Model):
             p1_discards=False,
             p2_draws=not p1_goes_first,
             p2_discards=False,
-            p1_last_completed_turn=Game.now(),
-            p2_last_completed_turn=Game.now(),
+            p1_last_completed_turn=now(),
+            p2_last_completed_turn=now(),
             public_hud={dealt_game['discard'][0]: Game.HUD_TOP_OF_DECK},
             **dealt_game
         )
