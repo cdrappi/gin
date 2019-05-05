@@ -57,7 +57,7 @@ class GameSeriesList extends Component {
     return (
       <div className="game-series-list">
         <h2>
-          SERIES{" "}
+          GAME SERIES{" "}
           <button onClick={this.refreshGameSeries} className="reload">
             &#x21bb;
           </button>

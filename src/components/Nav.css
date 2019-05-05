@@ -1,9 +1,12 @@
 .nav {
-    font-family: "Courier New", Courier, monospace;
-    border-style: dotted;
-    text-align: left;
+    font-family: monospace;
+    /* border-style: dotted; */
+    text-align: center;
+    margin: 0px 0 0px 0;
 }
 
-.nav ul li {
-    list-style-type: none;
+button {
+    font-size: 150%;
+    margin: 5px 5px 10px 5px;
+    width: 1.5in;
 }

@@ -95,8 +95,8 @@ class CreateGameSeries extends Component {
       window.location.reload();
     }
     return (
-      <div>
-        <h2>Create a new game</h2>
+      <div className="create-game-container">
+        <h2>NEW GAME SERIES</h2>
         <div className="input-container">
           <div className="input-section">
             <select
