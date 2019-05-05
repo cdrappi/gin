@@ -70,16 +70,16 @@ def get_users_games(request):
     :param request:
     :return:
     """
-    if True:
+    try:
         users_games = Game.list_users_games(request.user)
         return JsonResponse(data=users_games)
-    # TODO: make more specific
-    # except:
-    #     return JsonResponse(data={
-    #         Game.PLAY: [],
-    #         Game.WAIT: [],
-    #         Game.COMPLETE: [],
-    #     })
+    except:
+        # TODO: make more specific
+        return JsonResponse(data={
+            Game.PLAY: [],
+            Game.WAIT: [],
+            Game.COMPLETE: [],
+        })
 
 
 def get_users_game_series(request):
@@ -88,13 +88,14 @@ def get_users_game_series(request):
     :param request:
     :return:
     """
-    if True:
+    try:
         users_series = GameSeries.get_game_series(request.user)
         return JsonResponse(data=users_series)
-    # except:
-    #     return JsonResponse(
-    #         data={GameSeries.COMPLETE: [], GameSeries.INCOMPLETE: []}
-    #     )
+    except:
+        # TODO: make more specific
+        return JsonResponse(
+            data={GameSeries.COMPLETE: [], GameSeries.INCOMPLETE: []}
+        )
 
 
 @csrf_exempt  # TODO: add CSRF token to React fetch headers
