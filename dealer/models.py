@@ -6,8 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models import Q
-
 from gin_utils import deck, ricky
+
+from dealer.utils.game_state import GinRickyGameState
 
 
 class CardField(models.CharField):
@@ -189,6 +190,23 @@ class Game(models.Model):
     HUD_OPPONENT = "o"
 
     DECK_DUMMY_CARD = "?y"
+
+    def create_game_state(self):
+        return GinRickyGameState(
+            turns=self.turns,
+            shuffles=self.shuffles,
+            public_hud=self.public_hud,
+            deck=self.deck,
+            discard=self.discard,
+            p1_hand=self.p1_hand,
+            p2_hand=self.p2_hand,
+            p1_discards=self.p1_discards,
+            p1_draws=self.p1_draws,
+            p2_discards=self.p2_discards,
+            p2_draws=self.p2_draws,
+            last_draw=self.last_draw,
+            last_draw_from_discard=self.last_draw_from_discard
+        )
 
     @property
     def player_1(self):
