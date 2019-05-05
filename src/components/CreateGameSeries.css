@@ -1,12 +1,12 @@
-.create-game-container {
-    padding: 30px 0 0 0;
+.CreateGameSeries {
+    padding: 10px 0 0 0;
     text-align: center;
 }
 
 .input-container {
     text-align: left;
     margin: 0;
-    padding: 0 0 0 50px;
+    padding: 10px 0 0 0;
     display: inline-block;
     font-size: 150%
 }

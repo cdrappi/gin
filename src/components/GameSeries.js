@@ -32,7 +32,7 @@ class GameSeries extends Component {
     let pointsText = this.props.points + "-" + this.props.opponent_points;
 
     return (
-      <div className="game-series">
+      <div className="GameSeries">
         <div>
           {" "}
           {this.props.opponent_username}({this.props.id}){" "}

@@ -55,9 +55,9 @@ class GameSeriesList extends Component {
       this.newGameSeries(g)
     );
     return (
-      <div className="game-series-list">
+      <div className="GameSeriesList">
         <h2>
-          GAME SERIES{" "}
+          STANDINGS{" "}
           <button onClick={this.refreshGameSeries} className="reload">
             &#x21bb;
           </button>
@@ -65,12 +65,16 @@ class GameSeriesList extends Component {
         {"  "}
 
         <div>
-          <div>
-            <h3>Active</h3>
+          <div className="game-series-list">
+            <h3 className="list-description">
+              <u>Active</u>
+            </h3>
             {incomplete_games}
           </div>
-          <div>
-            <h3>Completed</h3>
+          <div className="game-series-list">
+            <h3 className="list-description">
+              <u>Completed</u>
+            </h3>
             {complete_games}
           </div>
         </div>
