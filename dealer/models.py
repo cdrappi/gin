@@ -4,17 +4,17 @@ import itertools
 import random
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models import Q
 
-ranks = list('23456789TJQKA')
-suits = set('cdhs')
+card_ranks = list('23456789TJQKA')
+card_suits = set('cdhs')
 
-CARD_CHOICES = [(f'{rank}{suit}', f'{rank} of {suit}')
-                for rank in ranks for suit in suits]
+card_choices = [(f'{rank}{suit}', f'{rank} of {suit}')
+                for rank in card_ranks for suit in card_suits]
 
-CARD_VALUES = {
+card_values = {
     'A': 1,
     'T': 10,
     'J': 11,
@@ -28,7 +28,7 @@ class CardField(models.CharField):
     """ e.g. 'Ah', 'Kc', '4s', etc. """
 
     def __init__(self, *args, **kwargs):
-        kwargs = {**kwargs, 'max_length': 2, 'choices': CARD_CHOICES}
+        kwargs = {**kwargs, 'max_length': 2, 'choices': card_choices}
         super().__init__(*args, **kwargs)
 
 
@@ -166,6 +166,13 @@ class Game(models.Model):
     turns = models.IntegerField(default=0)
     shuffles = models.IntegerField(default=0)
 
+    # Map from card --> location
+    # "d": discard
+    # "t": top of discard
+    # "1": player 1's hand
+    # "2": player 2's hand
+    public_hud = JSONField(default=dict)
+
     # denormalize for convenience... only edit the Game model during the game,
     # and write-only to all other models.
     deck = ArrayField(base_field=CardField())
@@ -235,6 +242,7 @@ class Game(models.Model):
             card_drawn = self.top_of_discard
             self.add_to_hand(user, card_drawn)
             self.discard = self.discard[:-1]
+            self.public_hud[card_drawn] = "1" if is_p1 else "2"
         else:
             card_drawn = self.top_of_deck
             self.add_to_hand(user, self.top_of_deck)
@@ -247,6 +255,12 @@ class Game(models.Model):
                 self.deck = new_deck
                 self.discard = []
                 self.shuffles += 1
+                # Theoretically, both players know each others hands at this point,
+                # so we can just do this:
+                self.public_hud = {
+                    **{c: "1" for c in self.p1_hand},
+                    **{c: "2" for c in self.p2_hand}
+                }
 
         if is_p1:
             self.p1_draws = False
@@ -303,6 +317,11 @@ class Game(models.Model):
             self.p2_discards = False
             self.p1_draws = True
             self.p2_last_completed_turn = self.now()
+
+        # add discard to HUD
+        if self.discard:
+            self.public_hud[self.discard[-1]] = "d"
+        self.public_hud[card] = "t"
 
         self.discard.append(card)
 
@@ -375,7 +394,7 @@ class Game(models.Model):
 
     @staticmethod
     def sort_cards(cards):
-        return sorted(cards, key=lambda c: CARD_VALUES[c[0]])
+        return sorted(cards, key=lambda c: card_values[c[0]])
 
     def sorted_hand(self, hand):
         """
@@ -422,7 +441,7 @@ class Game(models.Model):
         # so we just need to check if they make a valid 3- or 4-straight
 
         # handle fact that aces can be 1 or 14
-        values_ace_as_1 = sorted(CARD_VALUES[r] for r in card_ranks)
+        values_ace_as_1 = sorted(card_values[r] for r in card_ranks)
         rank_combos = [values_ace_as_1]
         if any(r == 'A' for r in card_ranks):
             rank_combos.append(sorted(14 if value == 1 else value for value in values_ace_as_1))
@@ -435,7 +454,7 @@ class Game(models.Model):
 
     @staticmethod
     def calculate_points(card_ranks):
-        return sum(CARD_VALUES[r] for r in card_ranks)
+        return sum(card_values[r] for r in card_ranks)
 
     @staticmethod
     def ranks_make_a_straight(rank_combo):
@@ -506,6 +525,22 @@ class Game(models.Model):
             final_info['drawn_card'] = self.last_draw
 
         hand = self.sorted_hand(self.users_hand(user))
+
+        def transform_loc(loc):
+            """
+            :param loc: (str) "1" or "2" for p1/p2
+            :return: "u" or "o" for user/opponent
+            """
+            if loc == "1":
+                return "u" if is_p1 else "o"
+            elif loc == "2":
+                return "u" if is_p2 else "o"
+            else:
+                return loc
+
+        transformed_hud = {
+            card: transform_loc(loc) for card, loc in self.public_hud.items()
+        }
         return {
             'hand': hand,
             'points': self.hand_points(hand),
@@ -515,6 +550,7 @@ class Game(models.Model):
                 self.p1_last_completed_turn if is_p1
                 else self.p2_last_completed_turn
             ),
+            'hud': {**transformed_hud, **{c: "u" for c in hand}},
             **common_items,
             **final_info
         }
@@ -565,7 +601,7 @@ class Game(models.Model):
 
     @staticmethod
     def random_deck():
-        deck = [card for card, _ in CARD_CHOICES]
+        deck = [card for card, _ in card_choices]
         random.shuffle(deck)
         return deck
 
