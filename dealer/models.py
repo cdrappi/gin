@@ -533,16 +533,13 @@ class Game(models.Model):
             Game.COMPLETE: [],
         }
         for game in games:
-            print(game)
             game_state = game.get_state(user)
-            print(f'game state: "{game_state}" -- ')
             if game_state['action'] in {'draw', 'discard'}:
                 users_games[Game.PLAY].append(game_state)
             else:
                 users_games[game_state['action']].append(game_state)
 
         users_games[Game.PLAY].sort(key=lambda k: k['last_completed_turn'])
-        print(users_games)
         return users_games
 
 
