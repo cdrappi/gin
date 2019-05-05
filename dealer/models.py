@@ -7,29 +7,14 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models import Q
 
-from gin_utils import ricky
-
-card_ranks = list('23456789TJQKA')
-card_suits = list('cdhs')
-
-card_choices = [(f'{rank}{suit}', f'{rank} of {suit}')
-                for rank in card_ranks for suit in card_suits]
-
-card_values = {
-    'A': 1,
-    'T': 10,
-    'J': 11,
-    'Q': 12,
-    'K': 13,
-    **{d: int(d) for d in '23456789'}
-}
+from gin_utils import deck, ricky
 
 
 class CardField(models.CharField):
     """ e.g. 'Ah', 'Kc', '4s', etc. """
 
     def __init__(self, *args, **kwargs):
-        kwargs = {**kwargs, 'max_length': 2, 'choices': card_choices}
+        kwargs = {**kwargs, 'max_length': 2, 'choices': deck.card_choices}
         super().__init__(*args, **kwargs)
 
 
@@ -366,26 +351,26 @@ class Game(models.Model):
 
     @staticmethod
     def sort_cards(cards):
-        return sorted(cards, key=lambda c: card_values[c[0]])
+        return sorted(cards, key=lambda c: deck.card_values[c[0]])
 
     def sorted_hand(self, hand):
         """
         :param hand: ([str])
         :return: ([str])
         """
-        combo_3, combo_4, *maybe_last_card = min(self.yield_hand_combos(hand),
-                                                 key=lambda k: self.combos_points(k[0], k[1]))
+        combo_3, combo_4, *maybe_last_card = min(ricky.yield_hand_combos(hand),
+                                                 key=lambda k: ricky.combos_points(k[0], k[1]))
         sorted_combo_3 = self.sort_cards(combo_3)
         sorted_combo_4 = self.sort_cards(combo_4)
         sorted_hand = sorted_combo_3 + sorted_combo_4 + maybe_last_card
-        rank_points = self.calculate_points([c[0] for c in sorted_hand])
-        combo_points = self.combos_points(combo_3, combo_4)
+        rank_points = ricky.sum_card_ranks([c[0] for c in sorted_hand])
+        combo_points = ricky.combos_points(combo_3, combo_4)
         if maybe_last_card:
             combo_points += self.calculate_points(maybe_last_card[0][0])
 
         if rank_points == combo_points:
             return self.sort_cards(sorted_hand)
-        elif self.combo_points(combo_4) < self.combo_points(combo_3):
+        elif ricky.combo_points(combo_4) < ricky.combo_points(combo_3):
             return sorted_combo_4 + sorted_combo_3 + maybe_last_card
         else:
             return sorted_combo_3 + sorted_combo_4 + maybe_last_card
@@ -520,7 +505,6 @@ class Game(models.Model):
         assert user in {self.player_1, self.player_2}
         opponent = self.player_1 if user == self.player_2 else self.player_2
         return self.users_hand(opponent)
-
 
     @staticmethod
     def new_game(game_series):
