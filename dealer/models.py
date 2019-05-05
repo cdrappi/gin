@@ -7,8 +7,8 @@ from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
 from gin_utils import deck
-from gin_utils.ricky.utils import deal_new_game
 from gin_utils.ricky.game_state import GinRickyGameState
+from gin_utils.ricky.utils import deal_new_game
 
 
 class CardField(models.CharField):
@@ -180,20 +180,16 @@ class Game(models.Model):
     last_draw = CardField(null=True)
     last_draw_from_discard = models.NullBooleanField()
 
-    PLAY = 'play'
-    DRAW = 'draw'
-    DISCARD = 'discard'
-    WAIT = 'wait'
-    COMPLETE = 'complete'
+    action_play = 'play'
+    action_draw = GinRickyGameState.action_draw
+    action_discard = GinRickyGameState.action_discard
+    action_wait = GinRickyGameState.action_wait
+    action_complete = GinRickyGameState.action_complete
 
-    HUD_PLAYER_1 = "1"
-    HUD_PLAYER_2 = "2"
-    HUD_TOP_OF_DECK = "t"
-    HUD_DISCARD = "d"
-    HUD_USER = "u"
-    HUD_OPPONENT = "o"
-
-    DECK_DUMMY_CARD = "?y"
+    action_map = {
+        action_draw: action_play,
+        action_discard: action_play,
+    }
 
     def build_game_state(self):
         """
@@ -433,7 +429,9 @@ class Game(models.Model):
             p2_discards=False,
             p1_last_completed_turn=now(),
             p2_last_completed_turn=now(),
-            public_hud={dealt_game['discard'][0]: Game.HUD_TOP_OF_DECK},
+            public_hud={
+                dealt_game['discard'][0]: GinRickyGameState.hud_top_of_deck
+            },
             **dealt_game
         )
         game.save()
@@ -459,18 +457,18 @@ class Game(models.Model):
         player_in_game = Q(series__player_1=user) | Q(series__player_2=user)
         games = Game.objects.filter(player_in_game).order_by('id').filter(is_active=True)
         users_games = {
-            Game.PLAY: [],
-            Game.WAIT: [],
-            Game.COMPLETE: [],
+            Game.action_play: [],
+            GinRickyGameState.action_wait: [],
+            GinRickyGameState.action_complete: [],
         }
+
         for game in games:
             game_state = game.get_state(user)
-            if game_state['action'] in {'draw', 'discard'}:
-                users_games[Game.PLAY].append(game_state)
-            else:
-                users_games[game_state['action']].append(game_state)
+            action = game_state['action']
+            mapped_action = Game.action_map.get(action, action)
+            users_games[mapped_action].append(game_state)
 
-        users_games[Game.PLAY].sort(key=lambda k: k['last_completed_turn'])
+        users_games[Game.action_play].sort(key=lambda k: k['last_completed_turn'])
         return users_games
 
 
