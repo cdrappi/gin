@@ -1,18 +1,19 @@
 .hud-table {
-    /* font-size: 50%; */
-    /* background-color: white */
+    border-spacing: 0px;
+    padding: 0;
+    margin: 0;
 }
 
 .hud-header {
-    font-size: 60%
+    font-size: 80%;
 }
 
 .hud-body {
-    font-size: 30%
+    font-size: 40%;
 }
 
 .hud-users-hand {
-    background-color: yellow;
+    background-color: lightgreen;
 }
 
 .hud-opponents-hand {

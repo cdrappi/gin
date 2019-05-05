@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./Hud.css";
 
-const ranks = "A23456789TJQKA".split("");
+const ranks = "A23456789TJQK".split("");
 const suits = "cdhs".split("");
 const suit_emojis = {
   c: "♣️",
@@ -19,14 +19,6 @@ const location_css_map = {
 };
 
 class Hud extends Component {
-  tableData(card) {
-    // let rank = card[0];
-    // let suit = card[1];
-    let loc = this.props.hud[card];
-    let locCss = location_css_map[loc];
-    return <td key={card} className={`${locCss}`} />;
-  }
-
   suitHeader(suit) {
     return (
       <th key={suit} className={`header-${suit}`}>
@@ -35,6 +27,13 @@ class Hud extends Component {
     );
   }
 
+  tableData(card) {
+    // let rank = card[0];
+    // let suit = card[1];
+    let loc = this.props.hud[card];
+    let locCss = location_css_map[loc];
+    return <td key={card} className={`${locCss}`} />;
+  }
   mapSuitData(i) {
     // returns a function that maps suit to their table data
     return s => this.tableData(ranks[i] + s);
