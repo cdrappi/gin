@@ -54,12 +54,14 @@ class Hud extends Component {
     }
 
     return (
-      <table className="hud-table">
-        <thead className="hud-header">
-          <tr key="r0">{tableHeader}</tr>
-        </thead>
-        <tbody className="hud-body">{tableData}</tbody>
-      </table>
+      <div className="Hud">
+        <table className="hud-table">
+          <thead className="hud-header">
+            <tr key="r0">{tableHeader}</tr>
+          </thead>
+          <tbody className="hud-body">{tableData}</tbody>
+        </table>
+      </div>
     );
   }
 }
