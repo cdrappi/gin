@@ -1,4 +1,3 @@
-import copy
 import datetime
 import random
 
@@ -6,9 +5,10 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models import Q
+from django.utils.timezone import now
 from gin_utils import deck, ricky
 
-from dealer.utils.game_state import GinRickyGameState
+from dealer.utils.gin_ricky_game_state import GinRickyGameState
 
 
 class CardField(models.CharField):
@@ -71,7 +71,7 @@ class GameSeries(models.Model):
         :return: ({str: [dict]})
         """
         player_in_series = Q(player_1=user) | Q(player_2=user)
-        recent_or_active = Q(created_at__gt=Game.now() - datetime.timedelta(days=7)) | Q(is_complete=False)
+        recent_or_active = Q(created_at__gt=now() - datetime.timedelta(days=7)) | Q(is_complete=False)
         series = (GameSeries
                   .objects
                   .filter(player_in_series)
@@ -98,7 +98,7 @@ class GameSeries(models.Model):
         game_series = GameSeries.objects.create(
             player_1_id=player_1_id,
             player_2_id=player_2_id,
-            created_at=Game.now(),
+            created_at=now(),
             points_to_stop=points_to_stop,
             concurrent_games=concurrent_games,
             cents_per_point=cents_per_point,
@@ -191,10 +191,12 @@ class Game(models.Model):
 
     DECK_DUMMY_CARD = "?y"
 
-    def create_game_state(self):
+    def build_game_state(self):
+        """
+
+        :return: (GinRickyGameState)
+        """
         return GinRickyGameState(
-            turns=self.turns,
-            shuffles=self.shuffles,
             public_hud=self.public_hud,
             deck=self.deck,
             discard=self.discard,
@@ -205,8 +207,41 @@ class Game(models.Model):
             p2_discards=self.p2_discards,
             p2_draws=self.p2_draws,
             last_draw=self.last_draw,
-            last_draw_from_discard=self.last_draw_from_discard
+            last_draw_from_discard=self.last_draw_from_discard,
+            is_complete=self.is_complete,
+            turns=self.turns,
+            shuffles=self.shuffles,
+            p1_points=self.p1_points,
+            p2_points=self.p2_points
         )
+
+    def save_from_game_state(self, game_state):
+        """
+        :param game_state:
+        :return:
+        """
+        self.public_hud = game_state.public_hud
+        self.deck = game_state.deck
+        self.discard = game_state.discard
+
+        self.p1_hand = game_state.p1_hand
+        self.p2_hand = game_state.p2_hand
+
+        self.p1_discards = game_state.p1_discards
+        self.p1_draws = game_state.p1_draws
+        self.p2_discards = game_state.p2_discards
+        self.p2_draws = game_state.p2_draws
+
+        self.last_draw = game_state.last_draw
+        self.last_draw_from_discard = game_state.last_draw_from_discard
+
+        self.turns = game_state.turns
+        self.shuffles = game_state.shuffles
+
+        self.p1_points = game_state.p1_points
+        self.p2_points = game_state.p2_points
+
+        self.save()
 
     @property
     def player_1(self):
@@ -245,45 +280,11 @@ class Game(models.Model):
 
         assert (is_p1 and self.p1_draws) or (is_p2 and self.p2_draws)
 
-        if from_discard:
-            card_drawn = self.top_of_discard
-            self.add_to_hand(user, card_drawn)
-            self.discard = self.discard[:-1]
-            self.public_hud[card_drawn] = (
-                Game.HUD_PLAYER_1 if is_p1
-                else Game.HUD_PLAYER_2
-            )
-        else:
-            card_drawn = self.top_of_deck
-            self.add_to_hand(user, self.top_of_deck)
-            self.deck = self.deck[1:]
-            if len(self.deck) == 0:
-                # if there are no cards left in the deck,
-                # shuffle up the discards
-                new_deck = copy.deepcopy(self.discard)
-                random.shuffle(new_deck)
-                self.deck = new_deck
-                self.discard = []
-                self.shuffles += 1
-                # Both players know each others hands
-                # at this point, so we can just do this:
-                self.public_hud = {
-                    **{c: Game.HUD_PLAYER_1 for c in self.p1_hand},
-                    **{c: Game.HUD_PLAYER_2 for c in self.p2_hand}
-                }
+        game_state = self.build_game_state()
+        card_drawn = game_state.draw_card(from_discard)
 
-        if is_p1:
-            self.p1_draws = False
-            self.p1_discards = True
-        elif is_p2:
-            self.p2_draws = False
-            self.p2_discards = True
+        self.save_from_game_state(game_state)
 
-        self.turns += 1
-        self.last_draw = card_drawn
-        self.last_draw_from_discard = from_discard
-
-        self.save()
         CardDrawn.objects.create(
             player=user,
             game=self,
@@ -292,10 +293,6 @@ class Game(models.Model):
             shuffle=self.shuffles,
             from_discard=from_discard
         )
-
-    @staticmethod
-    def now():
-        return datetime.datetime.now(tz=datetime.timezone.utc)
 
     def draw_from_deck(self, user):
         self.draw_card(user, from_discard=False)
@@ -317,36 +314,22 @@ class Game(models.Model):
         """
         assert card in self.users_hand(user)
 
-        if self.is_player_1(user):
-            self.p1_hand = [c for c in self.p1_hand if c != card]
-            self.p1_discards = False
-            self.p2_draws = True
+        is_p1 = self.is_player_1(user)
+        is_p2 = self.is_player_2(user)
+
+        assert (is_p1 and self.p1_discards) or (is_p2 and self.p2_discards)
+
+        game_state = self.build_game_state()
+        game_state.discard_card(card)
+
+        if is_p1:
             self.p1_last_completed_turn = self.now()
-        elif self.is_player_2(user):
-            self.p2_hand = [c for c in self.p2_hand if c != card]
-            self.p2_discards = False
-            self.p1_draws = True
+        elif is_p2:
             self.p2_last_completed_turn = self.now()
 
-        # add discard to HUD
-        if self.discard:
-            self.public_hud[self.discard[-1]] = Game.HUD_DISCARD
-        self.public_hud[card] = Game.HUD_TOP_OF_DECK
-
-        self.discard.append(card)
-
-        if self.user_points(user) == 0:
-            self.is_complete = True
+        if game_state.is_complete:
             self.is_active = False
-            if self.is_player_1(user):
-                self.p1_points = 0
-                self.p2_points = self.user_points(self.player_2)
-            else:
-                self.p1_points = self.user_points(self.player_1)
-                self.p2_points = 0
-
-        self.turns += 1
-        self.save()
+        self.save_from_game_state(game_state)
 
         CardDiscarded.objects.create(
             player=user,
@@ -358,33 +341,15 @@ class Game(models.Model):
         if self.is_complete:
             self.series.process_complete_game(self)
 
-    def user_points(self, user):
-        """
-
-        :param user: (User)
-        :return: (int)
-        """
-        users_hand = self.users_hand(user)
-        return ricky.hand_points(users_hand)
-
     def get_action(self, user):
         """
 
         :param user: (User)
         :return: (str) 'draw', 'discard', 'wait'
         """
-        if self.is_complete:
-            return self.COMPLETE
-
         is_p1 = self.is_player_1(user)
-        is_p2 = self.is_player_2(user)
-
-        if (is_p1 and self.p1_draws) or (is_p2 and self.p2_draws):
-            return self.DRAW
-        elif (is_p1 and self.p1_discards) or (is_p2 and self.p2_discards):
-            return self.DISCARD
-        else:
-            return self.WAIT
+        game_state = self.build_game_state()
+        return game_state.get_action(is_p1)
 
     def get_state(self, user):
         """
@@ -397,61 +362,18 @@ class Game(models.Model):
         if not (is_p1 or is_p2):
             return {}
 
+        game_state = self.build_game_state()
+
         opponent = self.get_opponent(user)
-        common_items = {
+        common_identifiers = {
             'series_id': self.series.id,
             'id': self.id,
             'opponent_id': opponent.id,
             'opponent_username': opponent.username
         }
-        if self.is_complete:
-            return {
-                'points': self.p1_points if is_p1 else self.p2_points,
-                'opponent_hand': self.opponents_hand(user),
-                'opponent_points': self.p1_points if is_p2 else self.p2_points,
-                'action': Game.COMPLETE,
-                **common_items
-            }
-
-        final_info = {'action': self.get_action(user), 'last_draw': None}
-        if final_info['action'] == "draw":
-            final_info['last_draw'] = (
-                self.last_draw
-                if self.last_draw_from_discard
-                else Game.DECK_DUMMY_CARD
-            )
-        if final_info['action'] == "discard":
-            final_info['drawn_card'] = self.last_draw
-
-        hand = ricky.sort_hand(self.users_hand(user))
-
-        def transform_loc(loc):
-            """
-            :param loc: (str) one of {"1", "2", "t", "d"}
-            :return: (str) one of {"u", "o", "d", "t"}
-            """
-            if loc == Game.HUD_PLAYER_1:
-                return Game.HUD_USER if is_p1 else Game.HUD_OPPONENT
-            elif loc == Game.HUD_PLAYER_2:
-                return Game.HUD_USER if is_p2 else Game.HUD_OPPONENT
-            else:
-                return loc
-
-        transformed_hud = {
-            card: transform_loc(loc) for card, loc in self.public_hud.items()
-        }
         return {
-            'hand': hand,
-            'points': ricky.hand_points(hand),
-            'top_of_discard': self.top_of_discard,
-            'deck_length': len(self.deck),
-            'last_completed_turn': (
-                self.p1_last_completed_turn if is_p1
-                else self.p2_last_completed_turn
-            ),
-            'hud': {**transformed_hud, **{c: Game.HUD_USER for c in hand}},
-            **common_items,
-            **final_info
+            **game_state.to_dict(is_p1),
+            **common_identifiers
         }
 
     def get_opponent(self, user):
@@ -470,16 +392,6 @@ class Game(models.Model):
         else:
             raise Exception(f"{user} is neither player 1 or player 2 in {self}")
 
-    @property
-    def top_of_discard(self):
-        if len(self.discard) == 0:
-            return None
-        return self.discard[-1]
-
-    @property
-    def top_of_deck(self):
-        return self.deck[0]
-
     def users_hand(self, user):
         """
 
@@ -492,11 +404,6 @@ class Game(models.Model):
             return self.p2_hand
         else:
             raise Exception(f"{user} is not in {self}")
-
-    def opponents_hand(self, user):
-        assert user in {self.player_1, self.player_2}
-        opponent = self.player_1 if user == self.player_2 else self.player_2
-        return self.users_hand(opponent)
 
     @staticmethod
     def new_game(game_series):
@@ -518,8 +425,8 @@ class Game(models.Model):
             p1_discards=False,
             p2_draws=not p1_goes_first,
             p2_discards=False,
-            p1_last_completed_turn=Game.now(),
-            p2_last_completed_turn=Game.now(),
+            p1_last_completed_turn=now(),
+            p2_last_completed_turn=now(),
             public_hud={dealt_game['discard'][0]: Game.HUD_TOP_OF_DECK},
             **dealt_game
         )
