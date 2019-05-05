@@ -32,10 +32,10 @@ class Game extends Component {
       discard = this.createCard(this.props.top_of_discard, false, false);
     }
 
-    let last_draw = " ";
-    if (this.props.last_draw) {
-      last_draw = this.createCard(this.props.last_draw, false, true);
-    }
+    // let last_draw = " ";
+    // if (this.props.last_draw) {
+    //   last_draw = this.createCard(this.props.last_draw, false, true);
+    // }
 
     let hud = <Hud className="hud" key={0} hud={this.props.hud} />;
 
@@ -55,10 +55,9 @@ class Game extends Component {
             {this.createCard("?x", false)}
           </div>
           <div>{hud}</div>
-          <div className="last-drawn-card"> </div>
           <div className="hand"> {cards_r2} </div>
           <div className="draw-discard-card">{discard}</div>
-          <div className="last-drawn-card">{last_draw}</div>
+          {/* <div className="last-drawn-card">{last_draw}</div> */}
         </div>
       </div>
     );

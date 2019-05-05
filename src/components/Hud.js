@@ -10,10 +10,11 @@ const suit_emojis = {
   s: "♠️"
 };
 const location_css_map = {
-  u: "users-hand",
-  o: "opponents-hand",
-  d: "discard",
-  t: "top-of-discard"
+  u: "hud-users-hand",
+  o: "hud-opponents-hand",
+  d: "hud-discard",
+  t: "hud-top-of-discard",
+  undefined: "unknown"
   // TODO: opponents-last-drawn
 };
 
@@ -25,18 +26,40 @@ class Hud extends Component {
     let locCss = location_css_map[loc];
     return <td key={card} className={`${locCss}`} />;
   }
+
+  suitHeader(suit) {
+    return (
+      <th key={suit} className={`header-${suit}`}>
+        {suit_emojis[suit]}
+      </th>
+    );
+  }
+
+  mapSuitData(i) {
+    // returns a function that maps suit to their table data
+    return s => this.tableData(ranks[i] + s);
+  }
+
   render() {
-    let tableHeader = suits.map(s => <th key={s}>{suit_emojis[s]}</th>);
+    let tableHeader = [<th key="h0" />].concat(
+      suits.map(s => this.suitHeader(s))
+    );
     let tableData = [];
-    for (let rank in ranks) {
-      tableData.push(<tr>{suits.map(s => this.tableData(rank + s))}</tr>);
+    for (var i = 0; i < ranks.length; i++) {
+      tableData.push(
+        <tr key={`r${i + 1}`}>
+          <td key={ranks[i]}>{ranks[i]}</td>
+          {suits.map(this.mapSuitData(i))}
+        </tr>
+      );
     }
 
-    console.log(tableData);
     return (
-      <table>
-        <thead>{tableHeader}</thead>
-        <tbody>{tableData}</tbody>
+      <table className="hud-table">
+        <thead className="hud-header">
+          <tr key="r0">{tableHeader}</tr>
+        </thead>
+        <tbody className="hud-body">{tableData}</tbody>
       </table>
     );
   }

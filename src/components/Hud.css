@@ -1,15 +1,48 @@
-.users-hand {
-    color: yellow;
+.hud-table {
+    /* font-size: 50%; */
+    /* background-color: white */
 }
 
-.opponents-hand {
-    color: darkorchid;
+.hud-header {
+    font-size: 60%
 }
 
-.discard {
-    color: lightgray
+.hud-body {
+    font-size: 30%
 }
 
-.top-of-discard {
-    color: orange
+.hud-users-hand {
+    background-color: yellow;
+}
+
+.hud-opponents-hand {
+    background-color: red;
+}
+
+.hud-discard {
+    background-color: lightgray
+}
+
+.hud-top-of-discard {
+    background-color: orange
+}
+
+.unknown {
+    background-color: white
+}
+
+.header-c {
+    color: green;
+}
+
+.header-d {
+    color: blue;
+}
+
+.header-h {
+    color: red;
+}
+
+.header-s {
+    color: black;
 }
