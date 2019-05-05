@@ -10,7 +10,7 @@ from django.db.models import Q
 from gin_utils import ricky
 
 card_ranks = list('23456789TJQKA')
-card_suits = set('cdhs')
+card_suits = list('cdhs')
 
 card_choices = [(f'{rank}{suit}', f'{rank} of {suit}')
                 for rank in card_ranks for suit in card_suits]
