@@ -70,11 +70,11 @@ def get_users_games(request):
     :param request:
     :return:
     """
-    try:
+    if True:
         users_games = Game.list_users_games(request.user)
         return JsonResponse(data=users_games)
     # TODO: make more specific
-    except:
+    else:
         return JsonResponse(data={
             Game.PLAY: [],
             Game.WAIT: [],

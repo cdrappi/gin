@@ -405,7 +405,7 @@ class Game(models.Model):
         if final_info['action'] == "discard":
             final_info['drawn_card'] = self.last_draw
 
-        hand = ricky.sorted_hand(self.users_hand(user))
+        hand = ricky.sort_hand(self.users_hand(user))
 
         def transform_loc(loc):
             """
@@ -424,7 +424,7 @@ class Game(models.Model):
         }
         return {
             'hand': hand,
-            'points': self.hand_points(hand),
+            'points': ricky.hand_points(hand),
             'top_of_discard': self.top_of_discard,
             'deck_length': len(self.deck),
             'last_completed_turn': (
@@ -533,13 +533,16 @@ class Game(models.Model):
             Game.COMPLETE: [],
         }
         for game in games:
+            print(game)
             game_state = game.get_state(user)
+            print(f'game state: "{game_state}" -- ')
             if game_state['action'] in {'draw', 'discard'}:
                 users_games[Game.PLAY].append(game_state)
             else:
                 users_games[game_state['action']].append(game_state)
 
         users_games[Game.PLAY].sort(key=lambda k: k['last_completed_turn'])
+        print(users_games)
         return users_games
 
 
