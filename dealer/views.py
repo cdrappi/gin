@@ -70,16 +70,16 @@ def get_users_games(request):
     :param request:
     :return:
     """
-    try:
+    if True:
         users_games = Game.list_users_games(request.user)
         return JsonResponse(data=users_games)
     # TODO: make more specific
-    except:
-        return JsonResponse(data={
-            Game.PLAY: [],
-            Game.WAIT: [],
-            Game.COMPLETE: [],
-        })
+    # except:
+    #     return JsonResponse(data={
+    #         Game.PLAY: [],
+    #         Game.WAIT: [],
+    #         Game.COMPLETE: [],
+    #     })
 
 
 def get_users_game_series(request):

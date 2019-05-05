@@ -27,6 +27,7 @@ class GameSeries(models.Model):
     is_complete = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_created=True)
+    completed_at = models.DateTimeField(null=True)
 
     points_to_stop = models.IntegerField(default=0)
     concurrent_games = models.IntegerField(default=1)
@@ -50,7 +51,6 @@ class GameSeries(models.Model):
         return {
             'id': self.id,
             'user_id': user.id,
-            'created_at': self.created_at,
             'opponent_id': opponent.id,
             'opponent_username': opponent.username,
             'points': self.p1_points if is_p1 else self.p2_points,
@@ -61,6 +61,8 @@ class GameSeries(models.Model):
             'concurrent_games': self.concurrent_games,
             'cents_per_point': self.cents_per_point,
             'is_complete': self.is_complete,
+            'completed_at': self.completed_at,
+            'created_at': self.created_at,
         }
 
     @staticmethod
@@ -71,7 +73,7 @@ class GameSeries(models.Model):
         :return: ({str: [dict]})
         """
         player_in_series = Q(player_1=user) | Q(player_2=user)
-        recent_or_active = Q(created_at__gt=now() - datetime.timedelta(days=7)) | Q(is_complete=False)
+        recent_or_active = Q(completed_at__gt=now() - datetime.timedelta(days=7)) | Q(is_complete=False)
         series = (GameSeries
                   .objects
                   .filter(player_in_series)
@@ -99,6 +101,7 @@ class GameSeries(models.Model):
             player_1_id=player_1_id,
             player_2_id=player_2_id,
             created_at=now(),
+            completed_at=None,
             points_to_stop=points_to_stop,
             concurrent_games=concurrent_games,
             cents_per_point=cents_per_point,
@@ -124,6 +127,7 @@ class GameSeries(models.Model):
 
         if incomplete_games == 0:
             self.is_complete = True
+            self.completed_at = now()
 
         self.save()
 
@@ -323,9 +327,9 @@ class Game(models.Model):
         game_state.discard_card(card)
 
         if is_p1:
-            self.p1_last_completed_turn = self.now()
+            self.p1_last_completed_turn = now()
         elif is_p2:
-            self.p2_last_completed_turn = self.now()
+            self.p2_last_completed_turn = now()
 
         if game_state.is_complete:
             self.is_active = False
@@ -365,15 +369,16 @@ class Game(models.Model):
         game_state = self.build_game_state()
 
         opponent = self.get_opponent(user)
-        common_identifiers = {
+        return {
             'series_id': self.series.id,
             'id': self.id,
             'opponent_id': opponent.id,
-            'opponent_username': opponent.username
-        }
-        return {
+            'opponent_username': opponent.username,
+            'last_completed_turn': (
+                self.p1_last_completed_turn if is_p1
+                else self.p2_last_completed_turn
+            ),
             **game_state.to_dict(is_p1),
-            **common_identifiers
         }
 
     def get_opponent(self, user):
