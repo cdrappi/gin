@@ -1,12 +1,13 @@
 import copy
 import datetime
-import itertools
 import random
 
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.db.models import Q
+
+from gin_utils import ricky
 
 card_ranks = list('23456789TJQKA')
 card_suits = set('cdhs')
@@ -361,42 +362,7 @@ class Game(models.Model):
         :return: (int)
         """
         users_hand = self.users_hand(user)
-        return self.hand_points(users_hand)
-
-    @staticmethod
-    def yield_hand_combos(hand):
-        for combo_3 in itertools.combinations(hand, 3):
-            remaining_cards = [c for c in hand if c not in combo_3]
-            if len(remaining_cards) == 5:
-                # not using itertools.combinations(remaining_cards, 1) here,
-                # because it returns a tuple with 1 item rather than sole item
-                for left_out_card in remaining_cards:
-                    combo_4 = [c for c in remaining_cards if c != left_out_card]
-                    yield combo_3, combo_4, left_out_card
-            elif len(remaining_cards) == 4:
-                yield combo_3, remaining_cards
-            else:
-                raise Exception(f"incorrect number of cards ({len(hand)}) in hand")
-
-    @classmethod
-    def combos_points(cls, combo_3, combo_4):
-        return cls.combo_points(combo_3) + cls.combo_points(combo_4)
-
-    @classmethod
-    def hand_points(cls, hand):
-        """
-
-        :param hand: ([str]) list of cards
-        :return: (int)
-        """
-        points = 14 * 7
-        for combo_3, combo_4, *_ in cls.yield_hand_combos(hand):
-            combo_points = cls.combos_points(combo_3, combo_4)
-            if combo_points == 0:
-                return 0
-            points = min(combo_points, points)
-
-        return points
+        return ricky.hand_points(users_hand)
 
     @staticmethod
     def sort_cards(cards):
@@ -423,56 +389,6 @@ class Game(models.Model):
             return sorted_combo_4 + sorted_combo_3 + maybe_last_card
         else:
             return sorted_combo_3 + sorted_combo_4 + maybe_last_card
-
-    @classmethod
-    def combo_points(cls, card_combo):
-        """
-
-        :param card_combo: ([str])
-        :return: (int)
-        """
-        first_rank, first_suit = card_combo[0]
-        card_ranks = [card[0] for card in card_combo]
-
-        if all(r == first_rank for r in card_ranks):
-            # all cards are same rank
-            return 0
-
-        if any(card[1] != first_suit for card in card_combo):
-            # cards are not of same rank and not of same suit,
-            # so return the points
-            return cls.calculate_points(card_ranks)
-
-        # NOTE: if we get to this point, cards have same suit
-        # so we just need to check if they make a valid 3- or 4-straight
-
-        # handle fact that aces can be 1 or 14
-        values_ace_as_1 = sorted(card_values[r] for r in card_ranks)
-        rank_combos = [values_ace_as_1]
-        if any(r == 'A' for r in card_ranks):
-            rank_combos.append(sorted(14 if value == 1 else value for value in values_ace_as_1))
-
-        for rank_combo in rank_combos:
-            if cls.ranks_make_a_straight(rank_combo):
-                return 0
-
-        return cls.calculate_points(card_ranks)
-
-    @staticmethod
-    def calculate_points(card_ranks):
-        return sum(card_values[r] for r in card_ranks)
-
-    @staticmethod
-    def ranks_make_a_straight(rank_combo):
-        """
-
-        :param rank_combo: ([int])
-        :return: (bool)
-        """
-        for r1, r2 in zip(rank_combo[:-1], rank_combo[1:]):
-            if r1 != r2 - 1:
-                return False
-        return True
 
     def get_action(self, user):
         """
@@ -605,21 +521,6 @@ class Game(models.Model):
         opponent = self.player_1 if user == self.player_2 else self.player_2
         return self.users_hand(opponent)
 
-    @staticmethod
-    def random_deck():
-        deck = [card for card, _ in card_choices]
-        random.shuffle(deck)
-        return deck
-
-    @staticmethod
-    def deal_new_game():
-        deck = Game.random_deck()
-        return {
-            'p1_hand': deck[0:7],
-            'p2_hand': deck[7:14],
-            'discard': [deck[14]],
-            'deck': deck[15:],
-        }
 
     @staticmethod
     def new_game(game_series):
@@ -628,7 +529,7 @@ class Game(models.Model):
         :param game_series: (GameSeries)
         :return:
         """
-        dealt_game = Game.deal_new_game()
+        dealt_game = ricky.deal_new_game(cards=7)
         p1_goes_first = random.choice([True, False])
         game = Game(
             series=game_series,
