@@ -66,7 +66,7 @@ class Games extends Component {
     let play_games = this.state.play.map(g => this.newGame(g));
     let wait_games = this.state.wait.map(g => this.newGame(g));
     return (
-      <div>
+      <div className="games-container">
         <h2>
           ALL GAMES{" "}
           <button onClick={this.refreshGames} className="reload">

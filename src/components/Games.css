@@ -1,16 +1,11 @@
+.games-container {
+    text-align: center;
+}
+
 .draw-legend {
     color: #5de65d;
 }
 
 .discard-legend {
     color: #ffb6c1;
-}
-
-h2 {
-    padding: 0 0 0 50px;
-    display: inline-block;
-}
-
-h3 {
-    padding: 0 0 0 50px;
 }
