@@ -19,7 +19,7 @@ class GameSeriesList extends Component {
     if (window.location.hostname === "localhost") {
       return;
     }
-    setInterval(() => this.refreshGames(), ONE_MINUTE);
+    setInterval(() => this.refreshGameSeries(), ONE_MINUTE);
   }
 
   refreshGameSeries() {
