@@ -1,5 +1,6 @@
-.reload {
-    font-family: Lucida Sans Unicode;
+.Games {
+    text-align: center;
+    margin: 20px 0 0 0;
 }
 
 .draw-legend {
@@ -8,13 +9,4 @@
 
 .discard-legend {
     color: #ffb6c1;
-}
-
-h2 {
-    padding: 0 0 0 50px;
-    display: inline-block;
-}
-
-h3 {
-    padding: 0 0 0 50px;
 }

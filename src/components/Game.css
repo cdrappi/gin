@@ -1,6 +1,7 @@
 .game {
     border-style: solid;
     border-width: 1px;
+    padding: 1px 0 5px 0;
     margin: 1px 0 1px 0;
     position: relative;
 }
@@ -15,11 +16,13 @@
     font-weight: bold;
 }
 
-.game-cards {
+.game-view {
     display: grid;
-    grid-gap: 10px 1px;
-    /* grid-template-columns: 6; */
-    grid-template-rows: 40%;
+    padding: 5px 0 3px 0;
+    grid-gap: 5px 1px;
+    grid-template-columns: 7;
+    /* grid-template-rows: 3; */
+    grid-row-gap: 0px;
 }
 
 .hand {
@@ -40,6 +43,11 @@
     grid-column: 6 / span 1;
     /* margin: 5px 5px 5px 5px; */
     margin: auto;
+}
+
+.hud {
+    grid-column: 7 / span 1;
+    grid-row: 1 / span 2;
 }
 
 .draw {

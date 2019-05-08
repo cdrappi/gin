@@ -119,18 +119,18 @@ class Login extends Component {
     return (
       <div className="Login">
         <p>{this.state.message}</p>
+        <h3 className="greeting">
+          {" "}
+          {this.state.logged_in
+            ? `Logged in as ${this.state.username}`
+            : "Please Log In"}{" "}
+        </h3>
         <Nav
           logged_in={this.state.logged_in}
           display_form={this.display_form}
           handle_logout={this.handle_logout}
         />{" "}
-        {form}{" "}
-        <h3 className="greeting">
-          {" "}
-          {this.state.logged_in
-            ? `Hello, ${this.state.username}`
-            : "Please Log In"}{" "}
-        </h3>{" "}
+        {form}
       </div>
     );
   }

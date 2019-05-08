@@ -1,3 +1,39 @@
+.CreateGameSeries {
+    padding: 10px 0 0 0;
+    text-align: center;
+}
+
+.input-container {
+    text-align: left;
+    margin: 0;
+    padding: 10px 0 0 0;
+    display: inline-block;
+    font-size: 150%
+}
+
+.opponent-selector {
+    font-size: 100%
+}
+
+.input-section {
+    margin: 5px 0 5px 0;
+    padding: 5px 0 5px 0;
+}
+
+.input-description {
+    margin: 0 0 0 5px;
+}
+
 .input-item {
-    margin: 10px 0 0 0;
+    margin: 0;
+    padding: 0;
+    width: 50px;
+    float: left;
+    text-align: center;
+    font-size: 100%;
+}
+
+.create-button {
+    margin: 10px 0 50px 0;
+    font-size: 150%
 }

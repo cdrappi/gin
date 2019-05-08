@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./Games.css";
+import "./Common.css";
 import Game from "./Game";
 import API_HOST from "./api-config";
 
@@ -52,6 +53,7 @@ class Games extends Component {
         last_draw={g.last_draw}
         deck_length={g.deck_length}
         drawn_card={g.drawn_card}
+        hud={g.hud}
         points={g.points}
         refreshGames={this.refreshGames}
       />
@@ -62,16 +64,17 @@ class Games extends Component {
     let play_games = this.state.play.map(g => this.newGame(g));
     let wait_games = this.state.wait.map(g => this.newGame(g));
     return (
-      <div>
-        <h2>ALL GAMES</h2>
-        {"  "}
-        <span onClick={this.refreshGames} className="reload">
-          &#x21bb;
-        </span>
+      <div className="Games">
+        <h2>
+          ALL GAMES{" "}
+          <button onClick={this.refreshGames} className="reload">
+            &#x21bb;
+          </button>
+        </h2>
         <div>
           <div>
             <h3>
-              <span className="draw-legend">DRAW</span> OR{" "}
+              YOU ACT: <span className="draw-legend">DRAW</span> OR{" "}
               <span className="discard-legend">DISCARD</span>
             </h3>
             {play_games}

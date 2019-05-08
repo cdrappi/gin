@@ -1,0 +1,54 @@
+.Hud {
+    padding: 0;
+}
+
+.hud-table {
+    border-spacing: 0px;
+    padding: 0;
+    margin: 0;
+}
+
+.hud-header {
+    font-size: 80%;
+}
+
+.hud-body {
+    font-size: 6pt;
+    font-family: monospace;
+}
+
+.hud-users-hand {
+    background-color: lightgreen;
+}
+
+.hud-opponents-hand {
+    background-color: red;
+}
+
+.hud-discard {
+    background-color: lightgray
+}
+
+.hud-top-of-discard {
+    background-color: blue
+}
+
+.unknown {
+    background-color: white
+}
+
+.header-c {
+    color: green;
+}
+
+.header-d {
+    color: blue;
+}
+
+.header-h {
+    color: red;
+}
+
+.header-s {
+    color: black;
+}

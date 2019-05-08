@@ -95,49 +95,59 @@ class CreateGameSeries extends Component {
       window.location.reload();
     }
     return (
-      <div>
-        <h2>Create a new game</h2>
-        <div>
-          <select
-            id="opponent_id"
-            name="opponent_id"
-            value={this.state.opponent_id}
-            onChange={this.handleChange}
-          >
-            {options}
-          </select>
-          <div className="input-item">
-            <span>Points</span>
+      <div className="CreateGameSeries">
+        <h2>NEW GAME</h2>
+        <div className="input-container">
+          <div className="input-section">
+            <select
+              id="opponent_id"
+              name="opponent_id"
+              value={this.state.opponent_id}
+              onChange={this.handleChange}
+              className="opponent-selector"
+            >
+              {options}
+            </select>
+          </div>
+          <div className="input-section">
+            <span className="input-description">Points</span>
             <input
               type="text"
               id="points_to_stop"
               name="points_to_stop"
               onChange={this.handleChange}
               value={this.state.points_to_stop}
+              className="input-item"
             />
           </div>
-          <div className="input-item">
-            <span>Games</span>
+          <div className="input-section">
+            <span className="input-description">Games</span>
             <input
               type="text"
               id="concurrent_games"
               name="concurrent_games"
               onChange={this.handleChange}
               value={this.state.concurrent_games}
+              className="input-item"
             />
           </div>
-          <div className="input-item">
-            <span>Cents/point</span>
+          <div className="input-section">
+            <span className="input-description">Cents/point</span>
             <input
               type="text"
               id="cents_per_point"
               name="cents_per_point"
               onChange={this.handleChange}
               value={this.state.cents_per_point}
+              className="input-item"
             />
           </div>
+          <div>
+            <button onClick={this.handleSubmit} className="create-button">
+              CREATE
+            </button>
+          </div>
         </div>
-        <button onClick={this.handleSubmit}>CREATE</button>
       </div>
     );
   }

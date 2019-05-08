@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import GameSeries from "./GameSeries";
 import API_HOST from "./api-config";
 import "./GameSeriesList.css";
+import "./Common.css";
 
 const ONE_MINUTE = 60 * 1000;
 class GameSeriesList extends Component {
@@ -62,19 +63,26 @@ class GameSeriesList extends Component {
       this.newGameSeries(g)
     );
     return (
-      <div className="game-series-list">
-        <h2>SERIES</h2>
+      <div className="GameSeriesList">
+        <h2>
+          STANDINGS{" "}
+          <button onClick={this.refreshGameSeries} className="reload">
+            &#x21bb;
+          </button>
+        </h2>
         {"  "}
-        <span onClick={this.refreshGameSeries} className="reload">
-          &#x21bb;
-        </span>
+
         <div>
-          <div>
-            <h3>Active</h3>
+          <div className="game-series-list">
+            <h3 className="list-description">
+              <u>Active</u>
+            </h3>
             {incomplete_games}
           </div>
-          <div>
-            <h3>Completed</h3>
+          <div className="game-series-list">
+            <h3 className="list-description">
+              <u>Completed</u>
+            </h3>
             {complete_games}
           </div>
         </div>

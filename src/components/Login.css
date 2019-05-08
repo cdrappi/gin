@@ -1,6 +1,7 @@
 .Login {
     margin: 0 10px 0 10px;
     font-family: Georgia;
+    background-color: lightgray;
 }
 
 input {
@@ -9,7 +10,6 @@ input {
 }
 
 .greeting {
-    border-style: dashed;
     padding: 1% 0 1% 0;
     text-align: center;
 }
