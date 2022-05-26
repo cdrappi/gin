@@ -1,4 +1,6 @@
+import datetime
 import random
+from typing import Dict, Tuple
 
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
@@ -329,6 +331,16 @@ class Game(models.Model):
             action = game_state['action']
             mapped_action = Game.action_map.get(action, action)
             users_games[mapped_action].append(game_state)
+        
+        def _sort_games(gs: Dict) -> Tuple[int, datetime.datetime]:
+            return (
+                (
+                    0
+                    if gs['action'] == Game.action_discard
+                    else 1
+                ),
+                gs['last_completed_turn']
+            )
 
-        users_games[Game.action_play].sort(key=lambda k: k['last_completed_turn'])
+        users_games[Game.action_play].sort(key=_sort_games)
         return users_games
